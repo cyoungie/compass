@@ -1,8 +1,11 @@
 """
 Quickstart: first API call to Claude.
 Run: python quickstart.py
-Set ANTHROPIC_API_KEY in your environment or .env before running.
+Set ANTHROPIC_API_KEY in your environment or in a .env file.
 """
+from dotenv import load_dotenv
+load_dotenv()
+
 import anthropic
 
 client = anthropic.Anthropic()

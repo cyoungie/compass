@@ -1,7 +1,11 @@
 """
 Example: Claude call tailored for a foster care youth app.
 Run: python app_example.py
+Set ANTHROPIC_API_KEY in your environment or in a .env file.
 """
+from dotenv import load_dotenv
+load_dotenv()
+
 import anthropic
 
 client = anthropic.Anthropic()
