@@ -2,12 +2,11 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ProfileProvider, useProfile } from '../context/ProfileContext';
+import { AuthProvider, useAuth, isFirebaseConfigured } from '../context/AuthContext';
 import type { RootStackParamList, OnboardingStackParamList } from '../types/navigation';
 
-// Main (includes tabs + floating chat)
 import MainTabsWithChat from './MainTabsWithChat';
-
-// Onboarding
+import SignInScreen from '../screens/auth/SignInScreen';
 import WelcomeFormScreen from '../screens/onboarding/WelcomeFormScreen';
 import VoiceOnboardingScreen from '../screens/onboarding/VoiceOnboardingScreen';
 import SummaryScreen from '../screens/onboarding/SummaryScreen';
@@ -28,21 +27,43 @@ function OnboardingFlow() {
   );
 }
 
-function RootNavigator() {
-  const { user, isLoading } = useProfile();
-
-  if (isLoading) {
-    return null; // or a small splash
+function AuthStack() {
+  const { authUser, profileLoading } = useAuth();
+  if (profileLoading) return null;
+  if (authUser) {
+    return (
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Main" component={MainTabsWithChat} />
+      </Stack.Navigator>
+    );
   }
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Onboarding">
+      <Stack.Screen name="Onboarding" component={OnboardingFlow} />
+      <Stack.Screen name="SignIn" component={SignInScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function RootNavigator() {
+  const { user, setUser, isLoading } = useProfile();
+
+  if (isLoading) return null;
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {user ? (
-        <Stack.Screen name="Main" component={MainTabsWithChat} />
+    <AuthProvider setUser={setUser}>
+      {isFirebaseConfigured ? (
+        <AuthStack />
       ) : (
-        <Stack.Screen name="Onboarding" component={OnboardingFlow} />
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {user ? (
+            <Stack.Screen name="Main" component={MainTabsWithChat} />
+          ) : (
+            <Stack.Screen name="Onboarding" component={OnboardingFlow} />
+          )}
+        </Stack.Navigator>
       )}
-    </Stack.Navigator>
+    </AuthProvider>
   );
 }
 

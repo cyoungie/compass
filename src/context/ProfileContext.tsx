@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import type { StoredUser } from '../types';
 import { getStoredUser } from '../services/storage';
+import { isFirebaseConfigured } from './AuthContext';
 
 interface ProfileContextValue {
   user: StoredUser | null;
@@ -15,6 +16,10 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (isFirebaseConfigured) {
+      setIsLoading(false);
+      return;
+    }
     let cancelled = false;
     getStoredUser().then((u) => {
       if (!cancelled) {

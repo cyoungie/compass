@@ -14,6 +14,7 @@ import type { OnboardingFormData, StoredUser, UserProfile } from '../../types';
 import type { OnboardingStackParamList } from '../../types/navigation';
 import { useProfile } from '../../context/ProfileContext';
 import { setStoredUser } from '../../services/storage';
+import { isFirebaseConfigured } from '../../context/AuthContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'WelcomeForm'>;
@@ -55,11 +56,15 @@ export default function WelcomeFormScreen({ navigation }: Props) {
       birthday: birthday.trim() || '',
       zipCode: trimmedZip,
     };
+    if (isFirebaseConfigured) {
+      navigation.navigate('VoiceOnboarding', { form });
+      return;
+    }
     const profile = defaultProfile(form);
     const stored: StoredUser = {
       form,
       profile,
-      welcomeSummary: `Welcome, ${trimmedName}. We're here to help you with next steps—from getting your ID to finding resources near you. You can explore your priorities on the Home tab and use the chat anytime.`,
+      welcomeSummary: `We're really glad you're here. We're on your team—whether it's getting your ID, finding food, or just checking in. Your personalized map is on the Dashboard, and you can tap the chat bubble anytime you need someone in your corner.`,
       onboardingCompletedAt: new Date().toISOString(),
     };
     await setStoredUser(stored);
@@ -74,6 +79,12 @@ export default function WelcomeFormScreen({ navigation }: Props) {
       <View style={styles.content}>
         <Text style={styles.title}>Welcome to Compass</Text>
         <Text style={styles.subtitle}>A few details to get started</Text>
+
+        {__DEV__ && (
+          <Text style={styles.debug}>
+            Firebase: {isFirebaseConfigured ? 'configured' : 'NOT configured'}
+          </Text>
+        )}
 
         <Text style={styles.label}>Name</Text>
         <TextInput
@@ -109,6 +120,16 @@ export default function WelcomeFormScreen({ navigation }: Props) {
         <TouchableOpacity style={styles.button} onPress={handleContinue} activeOpacity={0.8}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
+
+        {isFirebaseConfigured && (
+          <TouchableOpacity
+            style={styles.signInLink}
+            onPress={() => navigation.getParent()?.navigate('SignIn')}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.signInLinkText}>Already have an account? Sign in</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </KeyboardAvoidingView>
   );
@@ -117,7 +138,7 @@ export default function WelcomeFormScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     paddingHorizontal: 24,
   },
@@ -129,27 +150,32 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#f1f5f9',
+    color: '#0f172a',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#94a3b8',
+    color: '#64748b',
     marginBottom: 32,
+  },
+  debug: {
+    fontSize: 12,
+    color: '#94a3b8',
+    marginBottom: 16,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#cbd5e1',
+    color: '#334155',
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
     fontSize: 16,
-    color: '#f1f5f9',
+    color: '#0f172a',
     marginBottom: 20,
   },
   button: {
@@ -163,5 +189,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '600',
     color: '#fff',
+  },
+  signInLink: {
+    marginTop: 24,
+    alignItems: 'center',
+  },
+  signInLinkText: {
+    fontSize: 15,
+    color: '#64748b',
   },
 });

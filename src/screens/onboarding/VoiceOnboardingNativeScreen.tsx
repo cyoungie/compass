@@ -124,13 +124,13 @@ function VoiceOnboardingContent({ navigation, route }: VoiceOnboardingNativeProp
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 24,
     paddingTop: 60,
   },
-  title: { fontSize: 26, fontWeight: '700', color: '#f1f5f9', marginBottom: 8 },
-  subtitle: { fontSize: 16, color: '#94a3b8', marginBottom: 24 },
-  fallback: { fontSize: 14, color: '#fbbf24', marginBottom: 16 },
+  title: { fontSize: 26, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  subtitle: { fontSize: 16, color: '#64748b', marginBottom: 24 },
+  fallback: { fontSize: 14, color: '#b45309', marginBottom: 16 },
   loader: { marginVertical: 24 },
   button: {
     backgroundColor: '#0ea5e9',
@@ -149,13 +149,13 @@ const styles = StyleSheet.create({
   buttonText: { fontSize: 17, fontWeight: '600', color: '#fff' },
   transcriptBox: {
     flex: 1,
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     borderRadius: 12,
     padding: 16,
     marginTop: 24,
     maxHeight: 360,
   },
-  transcriptLine: { fontSize: 14, color: '#cbd5e1', marginBottom: 6 },
+  transcriptLine: { fontSize: 14, color: '#334155', marginBottom: 6 },
   transcriptPlaceholder: { fontSize: 14, color: '#64748b' },
 });
 

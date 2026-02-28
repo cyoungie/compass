@@ -76,7 +76,7 @@ export default function ChatModal({ visible, onClose }: { visible: boolean; onCl
           />
           {loading && (
             <View style={styles.loadingRow}>
-              <ActivityIndicator size="small" color="#7dd3fc" />
+              <ActivityIndicator size="small" color="#0ea5e9" />
             </View>
           )}
           <View style={styles.inputRow}>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modal: {
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '85%',
@@ -120,9 +120,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#1e293b',
+    borderBottomColor: '#e2e8f0',
   },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#f1f5f9' },
+  headerTitle: { fontSize: 18, fontWeight: '600', color: '#0f172a' },
   close: { fontSize: 16, color: '#0ea5e9' },
   listContent: { padding: 16, paddingBottom: 8 },
   bubble: {
@@ -132,24 +132,24 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   userBubble: { alignSelf: 'flex-end', backgroundColor: '#0ea5e9' },
-  assistantBubble: { alignSelf: 'flex-start', backgroundColor: '#1e293b' },
-  bubbleText: { fontSize: 15, color: '#f1f5f9' },
+  assistantBubble: { alignSelf: 'flex-start', backgroundColor: '#f1f5f9' },
+  bubbleText: { fontSize: 15, color: '#0f172a' },
   loadingRow: { paddingHorizontal: 16, paddingVertical: 8 },
   inputRow: {
     flexDirection: 'row',
     padding: 16,
     gap: 12,
     borderTopWidth: 1,
-    borderTopColor: '#1e293b',
+    borderTopColor: '#e2e8f0',
   },
   input: {
     flex: 1,
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
     fontSize: 16,
-    color: '#f1f5f9',
+    color: '#0f172a',
   },
   sendBtn: {
     justifyContent: 'center',

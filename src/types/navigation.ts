@@ -8,13 +8,13 @@ export type OnboardingStackParamList = {
 
 export type MainTabParamList = {
   Home: undefined;
-  Legal: undefined;
   Mental: undefined;
   Resources: undefined;
   Community: undefined;
 };
 
 export type RootStackParamList = {
+  SignIn: undefined;
   Onboarding: undefined;
   Main: undefined;
 };

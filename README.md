@@ -22,6 +22,7 @@ A React Native (Expo) mobile app for foster youth aging out of care. Two phases:
    - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key
    - `EXPO_PUBLIC_ELEVENLABS_AGENT_ID` — (optional) for voice onboarding in dev builds
    - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab
+   - **Firebase (optional):** For auth + cloud profile + real community, add from Firebase Console → Project settings → Your web app: `EXPO_PUBLIC_FIREBASE_*` vars (see `.env.example`). Enable Auth (Email/Password) and Firestore. Create an index on `posts` for `createdAt` desc when prompted.
 
 3. **Run**
    ```bash
@@ -31,8 +32,8 @@ A React Native (Expo) mobile app for foster youth aging out of care. Two phases:
 
 ## App flow
 
-- **Onboarding:** Name, optional birthday, zip → default profile saved → main app.
-- **Dashboard:** Home (priorities), Legal (CA rights), Mental (check-in + resources), Resources (Places API), Community (mock feed), floating chat (Claude with profile context).
+- **Onboarding:** Name, optional birthday, zip → profile saved → main app. With Firebase, you can create an account (email/password) at the end to sync profile to the cloud.
+- **Dashboard:** Home, Mental, Resources, Community (real feed when Firebase configured), floating chat. Sign in/sign out when using Firebase.
 
 ## License
 

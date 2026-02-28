@@ -4,10 +4,12 @@ export interface PriorityAction {
   id: string;
   title: string;
   subtitle: string;
+  tag?: 'urgent' | 'this_week' | 'opportunity';
 }
 
 /**
  * Derive up to 3 priority action cards from the user's JSON profile.
+ * Copy is warm and supportive.
  */
 export function getPriorityActions(profile: UserProfile): PriorityAction[] {
   const actions: PriorityAction[] = [];
@@ -15,43 +17,49 @@ export function getPriorityActions(profile: UserProfile): PriorityAction[] {
   if (!profile.has_id) {
     actions.push({
       id: 'id',
+      tag: 'urgent',
       title: 'Get your State ID',
-      subtitle: 'You have the right to obtain a free state ID. We can help you with the steps.',
+      subtitle: 'DMV on Market St - Free for foster youth.',
     });
   }
   if (!profile.has_healthcare) {
     actions.push({
       id: 'healthcare',
-      title: 'Sign up for Medicaid',
-      subtitle: 'In California you can stay on Medicaid until 26. Get covered now.',
+      tag: 'this_week',
+      title: 'Enroll in Medicaid',
+      subtitle: 'You qualify until age 26 - Takes 10 min.',
     });
   }
   if (!profile.food_secure) {
     actions.push({
       id: 'food',
+      tag: 'this_week',
       title: 'Find food resources',
-      subtitle: 'See nearby food banks and pantries in the Resources tab.',
+      subtitle: 'Check the Resources tab for nearby food banks and pantries.',
     });
   }
   if (profile.wellbeing_score <= 2 && actions.length < 3) {
     actions.push({
       id: 'mental',
+      tag: 'this_week',
       title: 'Check in on your wellbeing',
-      subtitle: 'Use the Mental tab for daily check-ins and local support resources.',
+      subtitle: 'Your mental health matters - we are in your corner.',
     });
   }
   if (profile.legal_gaps && profile.legal_gaps.length > 0 && actions.length < 3) {
     actions.push({
       id: 'legal',
+      tag: 'opportunity',
       title: 'Address legal gaps',
-      subtitle: profile.legal_gaps.slice(0, 2).join(', ') + '. See Legal tab for your rights.',
+      subtitle: 'Head to the Resources tab to see your rights and next steps.',
     });
   }
   if (actions.length < 3 && profile.housing_status?.toLowerCase().includes('unstable')) {
     actions.push({
       id: 'housing',
+      tag: 'opportunity',
       title: 'Explore housing options',
-      subtitle: 'Extended foster care can include housing support. See Resources for shelters.',
+      subtitle: 'Extended foster care can include housing support. Shelters in Resources.',
     });
   }
 

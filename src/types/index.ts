@@ -45,6 +45,19 @@ export interface PlaceResource {
 }
 
 /**
+ * Result of geocoding a US zip code (Google Geocoding address_components).
+ */
+export interface LocationFromZip {
+  lat: number;
+  lng: number;
+  city?: string;
+  county?: string;
+  state?: string;
+  country: string;
+  isUS: boolean;
+}
+
+/**
  * Community feed post (mocked).
  */
 export interface CommunityPost {
@@ -53,4 +66,10 @@ export interface CommunityPost {
   avatarColor: string;
   body: string;
   timestamp: string;
+  /** Optional for dashboard preview */
+  location?: string;
+  /** win | meetup for badge display */
+  category?: 'win' | 'meetup' | string;
+  likes?: number;
+  replies?: number;
 }
