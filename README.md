@@ -1,46 +1,39 @@
-# Compass – AI for Foster Care Youth
+# Compass
 
-Starter project for an AI-powered app that helps foster care youth, using the Claude API.
+A React Native (Expo) mobile app for foster youth aging out of care. Two phases: **onboarding** (form → optional voice/summary) and **dashboard** (home, legal rights, mental check-in, resources, community) with a floating support chat.
 
-## Where the code lives
+## Tech stack
 
-| File | Purpose |
-|------|--------|
-| `quickstart.py` | First API call (Anthropic quickstart) – run this to verify your setup |
-| `app_example.py` | Same idea, with a foster-care–oriented prompt – starting point for your app logic |
-| `requirements.txt` | Python dependencies (Anthropic SDK) |
-
-As you build out the app, you can add:
-
-- `src/` or `app/` – main application code (API routes, prompts, helpers)
-- `backend/` – if you add a web API (e.g. FastAPI/Flask)
-- `frontend/` – if you add a web or mobile UI
+- **React Native** (Expo SDK 55)
+- **ElevenLabs** Conversational AI (voice onboarding, dev build only)
+- **Anthropic Claude API** — profile from transcript, welcome summary, in-app chat
+- **Google Maps Places API** — nearby food banks, shelters, FQHCs by zip
+- **AsyncStorage** — user profile and mental check-ins (client-side only)
 
 ## Setup
 
-1. **API key**  
-   Get a key from [Claude Console](https://console.anthropic.com/) and set it:
-
-   **PowerShell (Windows):**
-   ```powershell
-   $env:ANTHROPIC_API_KEY = "your-api-key-here"
-   ```
-
-   **Or** copy `.env.example` to `.env`, add your key there, and use a package like `python-dotenv` to load it (don’t commit `.env`).
-
-2. **Install dependencies**
+1. **Install dependencies**
    ```bash
-   pip install -r requirements.txt
+   npm install --legacy-peer-deps
    ```
 
-3. **Run the quickstart**
+2. **Environment variables**  
+   Copy `.env.example` to `.env` and set:
+   - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key
+   - `EXPO_PUBLIC_ELEVENLABS_AGENT_ID` — (optional) for voice onboarding in dev builds
+   - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab
+
+3. **Run**
    ```bash
-   python quickstart.py
+   npx expo start --ios
    ```
+   In Expo Go, onboarding skips voice and goes straight to the main app. For real voice, use a dev build: `npx expo run:ios`.
 
-4. **Run the foster care example**
-   ```bash
-   python app_example.py
-   ```
+## App flow
 
-Once these run successfully, you can start moving your real app logic into `src/` or `app/` and keep `quickstart.py` as a reference.
+- **Onboarding:** Name, optional birthday, zip → default profile saved → main app.
+- **Dashboard:** Home (priorities), Legal (CA rights), Mental (check-in + resources), Resources (Places API), Community (mock feed), floating chat (Claude with profile context).
+
+## License
+
+Private / your choice.

@@ -1,18 +1,35 @@
-# Environment and secrets
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Local env
 .env
 .env.local
-*.env
+.env.*.local
 
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-.venv/
-venv/
-env/
+# OS
+.DS_Store
+*.pem
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
+# TypeScript
+*.tsbuildinfo
