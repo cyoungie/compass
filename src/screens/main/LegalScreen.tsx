@@ -36,16 +36,16 @@ export default function LegalScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0f172a' },
+  container: { flex: 1, backgroundColor: '#ffffff' },
   content: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 22, fontWeight: '700', color: '#f1f5f9', marginBottom: 4 },
-  subtitle: { fontSize: 14, color: '#94a3b8', marginBottom: 20 },
+  title: { fontSize: 22, fontWeight: '700', color: '#0f172a', marginBottom: 4 },
+  subtitle: { fontSize: 14, color: '#64748b', marginBottom: 20 },
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
   },
-  cardTitle: { fontSize: 16, fontWeight: '600', color: '#7dd3fc', marginBottom: 6 },
-  cardBody: { fontSize: 14, color: '#cbd5e1', lineHeight: 20 },
+  cardTitle: { fontSize: 16, fontWeight: '600', color: '#0ea5e9', marginBottom: 6 },
+  cardBody: { fontSize: 14, color: '#334155', lineHeight: 20 },
 });

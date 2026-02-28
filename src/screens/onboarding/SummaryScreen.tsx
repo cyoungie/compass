@@ -5,7 +5,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
 } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../types/navigation';
@@ -13,6 +16,7 @@ import type { OnboardingFormData, StoredUser, UserProfile } from '../../types';
 import { generateProfileFromTranscript } from '../../services/claude';
 import { setStoredUser } from '../../services/storage';
 import { useProfile } from '../../context/ProfileContext';
+import { useAuth, isFirebaseConfigured } from '../../context/AuthContext';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'Summary'>;
@@ -22,10 +26,14 @@ type Props = {
 export default function SummaryScreen({ navigation, route }: Props) {
   const { form, transcript } = route.params;
   const { setUser } = useProfile();
+  const auth = useAuth();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [welcomeSummary, setWelcomeSummary] = useState('');
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [createLoading, setCreateLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -56,6 +64,26 @@ export default function SummaryScreen({ navigation, route }: Props) {
       welcomeSummary,
       onboardingCompletedAt: new Date().toISOString(),
     };
+    if (isFirebaseConfigured && auth) {
+      const e = email.trim();
+      const p = password;
+      if (!e || !p) {
+        setError('Enter email and password to create your account');
+        return;
+      }
+      setError(null);
+      setCreateLoading(true);
+      try {
+        await auth.createAccountWithProfile(e, p, stored);
+        setUser(stored);
+      } catch (err: unknown) {
+        const msg = err && typeof err === 'object' && 'message' in err ? String((err as { message: string }).message) : 'Account creation failed';
+        setError(msg);
+      } finally {
+        setCreateLoading(false);
+      }
+      return;
+    }
     await setStoredUser(stored);
     setUser(stored);
   };
@@ -63,13 +91,13 @@ export default function SummaryScreen({ navigation, route }: Props) {
   if (loading) {
     return (
       <View style={styles.center}>
-        <ActivityIndicator size="large" color="#7dd3fc" />
+        <ActivityIndicator size="large" color="#0ea5e9" />
         <Text style={styles.loadingText}>Creating your profile...</Text>
       </View>
     );
   }
 
-  if (error) {
+  if (error && !profile) {
     return (
       <View style={styles.center}>
         <Text style={styles.errorText}>{error}</Text>
@@ -81,28 +109,88 @@ export default function SummaryScreen({ navigation, route }: Props) {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Here’s your summary</Text>
       <View style={styles.card}>
         <Text style={styles.summary}>{welcomeSummary}</Text>
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleGetStarted} activeOpacity={0.8}>
-        <Text style={styles.buttonText}>Get started</Text>
-      </TouchableOpacity>
-    </View>
+        {isFirebaseConfigured && (
+          <>
+            <Text style={styles.createTitle}>Create your account</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email"
+              placeholderTextColor="#94a3b8"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              editable={!createLoading}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#94a3b8"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+              editable={!createLoading}
+            />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          </>
+        )}
+        <TouchableOpacity
+          style={[styles.button, createLoading && styles.buttonDisabled]}
+          onPress={handleGetStarted}
+          disabled={createLoading}
+          activeOpacity={0.8}
+        >
+          {createLoading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>
+              {isFirebaseConfigured ? 'Create account' : 'Get started'}
+            </Text>
+          )}
+        </TouchableOpacity>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
+  },
+  scroll: {
     paddingHorizontal: 24,
     paddingTop: 60,
+    paddingBottom: 40,
   },
+  createTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0f172a',
+    marginBottom: 12,
+  },
+  input: {
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#0f172a',
+    marginBottom: 12,
+  },
+  buttonDisabled: { opacity: 0.7 },
   center: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
@@ -110,11 +198,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: '#f1f5f9',
+    color: '#0f172a',
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#1e293b',
+    backgroundColor: '#f1f5f9',
     borderRadius: 12,
     padding: 20,
     marginBottom: 32,
@@ -122,16 +210,16 @@ const styles = StyleSheet.create({
   summary: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#e2e8f0',
+    color: '#334155',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#94a3b8',
+    color: '#64748b',
   },
   errorText: {
     fontSize: 16,
-    color: '#f87171',
+    color: '#dc2626',
     textAlign: 'center',
     marginBottom: 24,
   },

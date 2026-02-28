@@ -16,4 +16,22 @@ export const config = {
   get googleMapsApiKey(): string {
     return extra.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY) ?? '';
   },
+  get firebaseApiKey(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_API_KEY ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_API_KEY) ?? '';
+  },
+  get firebaseAuthDomain(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN) ?? '';
+  },
+  get firebaseProjectId(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_PROJECT_ID ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_PROJECT_ID) ?? '';
+  },
+  get firebaseStorageBucket(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET) ?? '';
+  },
+  get firebaseMessagingSenderId(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID) ?? '';
+  },
+  get firebaseAppId(): string {
+    return extra.EXPO_PUBLIC_FIREBASE_APP_ID ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_FIREBASE_APP_ID) ?? '';
+  },
 };
