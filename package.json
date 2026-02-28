@@ -1,0 +1,45 @@
+{
+  "name": "compass",
+  "version": "1.0.0",
+  "main": "expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@elevenlabs/react-native": "^0.5.11",
+    "@livekit/react-native": "^2.9.2",
+    "@livekit/react-native-webrtc": "^137.0.2",
+    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-navigation/bottom-tabs": "^7.0.0",
+    "@react-navigation/native": "^7.0.0",
+    "@react-navigation/native-stack": "^7.0.0",
+    "dotenv": "^16.4.5",
+    "expo": "^55.0.4",
+    "expo-asset": "^55.0.8",
+    "expo-constants": "~55.0.7",
+    "expo-font": "^55.0.4",
+    "expo-linking": "~55.0.7",
+    "expo-status-bar": "~55.0.4",
+    "livekit-client": "^2.15.4",
+    "react": "19.2.0",
+    "react-native": "0.83.2",
+    "react-native-safe-area-context": "~5.6.2",
+    "react-native-screens": "~4.23.0",
+    "react-native-url-polyfill": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "babel-preset-expo": "~55.0.8",
+    "@types/react": "~19.2.10",
+    "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "react": "19.2.0",
+    "react-native": "0.83.2"
+  },
+  "private": true
+}

@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "Compass",
+    "slug": "compass",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.compass.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Compass uses the microphone for voice onboarding.",
+        "NSSpeechRecognitionUsageDescription": "Compass uses speech recognition for voice onboarding."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.compass.app",
+      "permissions": [
+        "RECORD_AUDIO"
+      ]
+    },
+    "plugins": []
+  }
+}
