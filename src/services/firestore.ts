@@ -14,6 +14,7 @@ import {
   updateDoc,
   increment,
   serverTimestamp,
+  deleteDoc,
   type Timestamp,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -125,4 +126,9 @@ export async function addPost(params: {
 export async function likePost(postId: string): Promise<void> {
   const ref = doc(db, POSTS_COLLECTION, postId);
   await updateDoc(ref, { likesCount: increment(1) });
+}
+
+export async function deletePost(postId: string): Promise<void> {
+  const ref = doc(db, POSTS_COLLECTION, postId);
+  await deleteDoc(ref);
 }

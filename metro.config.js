@@ -2,7 +2,7 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('path');
 
-const projectRoot = __dirname;
+const projectRoot = path.resolve(__dirname);
 const config = getDefaultConfig(projectRoot);
 
 config.projectRoot = projectRoot;
@@ -11,6 +11,7 @@ config.resolver = config.resolver || {};
 config.resolver.blockList = [
   ...(Array.isArray(config.resolver.blockList) ? config.resolver.blockList : []),
   /\/Users\/[^/]+\/\.Trash\/.*/,
+  /\/Users\/[^/]+\/\.Trash$/,
   /\/Users\/[^/]+\/Library\/.*/,
 ];
 

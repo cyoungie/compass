@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useProfile } from '../context/ProfileContext';
 import { chatWithClaude } from '../services/claude';
+import { FONT_HEADING_SEMIBOLD, FONT_BODY, FONT_BODY_SEMIBOLD } from '../constants/fonts';
 
 interface Message {
   id: string;
@@ -122,8 +123,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#e2e8f0',
   },
-  headerTitle: { fontSize: 18, fontWeight: '600', color: '#0f172a' },
-  close: { fontSize: 16, color: '#0ea5e9' },
+  headerTitle: { fontFamily: FONT_HEADING_SEMIBOLD, fontSize: 18, color: '#0f172a' },
+  close: { fontFamily: FONT_BODY, fontSize: 16, color: '#0ea5e9' },
   listContent: { padding: 16, paddingBottom: 8 },
   bubble: {
     maxWidth: '85%',
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
   },
   userBubble: { alignSelf: 'flex-end', backgroundColor: '#0ea5e9' },
   assistantBubble: { alignSelf: 'flex-start', backgroundColor: '#f1f5f9' },
-  bubbleText: { fontSize: 15, color: '#0f172a' },
+  bubbleText: { fontFamily: FONT_BODY, fontSize: 15, color: '#0f172a' },
   loadingRow: { paddingHorizontal: 16, paddingVertical: 8 },
   inputRow: {
     flexDirection: 'row',
@@ -143,6 +144,7 @@ const styles = StyleSheet.create({
     borderTopColor: '#e2e8f0',
   },
   input: {
+    fontFamily: FONT_BODY,
     flex: 1,
     backgroundColor: '#f1f5f9',
     borderRadius: 12,
@@ -157,5 +159,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#0ea5e9',
     borderRadius: 12,
   },
-  sendText: { fontSize: 16, fontWeight: '600', color: '#fff' },
+  sendText: { fontFamily: FONT_BODY_SEMIBOLD, fontSize: 16, color: '#fff' },
 });

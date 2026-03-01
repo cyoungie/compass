@@ -14,12 +14,15 @@ export interface UserProfile {
 }
 
 /**
- * Onboarding form data (Screen 1).
+ * Onboarding form data (collected slide by slide).
+ * name = nickname/alias for privacy; age = approximate age (no specific birthday).
  */
 export interface OnboardingFormData {
   name: string;
   birthday: string;
   zipCode: string;
+  /** Approximate age (e.g. "17"); optional for backward compat. */
+  age?: string;
 }
 
 /**
@@ -41,6 +44,7 @@ export interface PlaceResource {
   address: string;
   distance: string;
   phone?: string;
+  website?: string;
   placeId?: string;
 }
 
@@ -72,4 +76,6 @@ export interface CommunityPost {
   category?: 'win' | 'meetup' | string;
   likes?: number;
   replies?: number;
+  /** Set when from Firestore; used to show delete for own posts */
+  authorId?: string;
 }

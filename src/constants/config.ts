@@ -10,9 +10,6 @@ export const config = {
   get anthropicApiKey(): string {
     return extra.EXPO_PUBLIC_ANTHROPIC_API_KEY ?? (typeof process !== 'undefined' && (process.env?.EXPO_PUBLIC_ANTHROPIC_API_KEY ?? process.env?.ANTHROPIC_API_KEY ?? process.env?.EXPO_ANTHROPIC_API_KEY)) ?? '';
   },
-  get elevenLabsAgentId(): string {
-    return extra.EXPO_PUBLIC_ELEVENLABS_AGENT_ID ?? (typeof process !== 'undefined' && (process.env?.EXPO_PUBLIC_ELEVENLABS_AGENT_ID ?? process.env?.ELEVENLABS_AGENT_ID ?? process.env?.EXPO_ELEVENLABS_AGENT_ID)) ?? '';
-  },
   get googleMapsApiKey(): string {
     return extra.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ?? (typeof process !== 'undefined' && process.env?.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY) ?? '';
   },

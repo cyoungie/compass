@@ -13,6 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../../context/AuthContext';
 import type { RootStackParamList } from '../../types/navigation';
+import { FONT_HEADING, FONT_BODY, FONT_BODY_SEMIBOLD } from '../../constants/fonts';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const ORANGE = '#E68D33';
@@ -133,17 +134,19 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   title: {
+    fontFamily: FONT_HEADING,
     fontSize: 32,
-    fontWeight: '700',
     color: '#1e293b',
     marginBottom: 8,
   },
   subtitle: {
+    fontFamily: FONT_BODY,
     fontSize: 16,
     color: '#64748b',
     marginBottom: 32,
   },
   input: {
+    fontFamily: FONT_BODY,
     backgroundColor: '#fff',
     borderRadius: 12,
     paddingVertical: 14,
@@ -155,6 +158,7 @@ const styles = StyleSheet.create({
     borderColor: '#e2e8f0',
   },
   error: {
+    fontFamily: FONT_BODY,
     fontSize: 14,
     color: '#dc2626',
     marginBottom: 12,
@@ -168,8 +172,8 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.7 },
   buttonText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 17,
-    fontWeight: '600',
     color: '#fff',
   },
   switch: {
@@ -177,6 +181,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   switchText: {
+    fontFamily: FONT_BODY,
     fontSize: 15,
     color: '#475569',
   },

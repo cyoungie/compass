@@ -7,14 +7,18 @@ import {
   TouchableOpacity,
   Dimensions,
   Alert,
+  Image,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProfile } from '../../context/ProfileContext';
 import { useAuth, isFirebaseConfigured } from '../../context/AuthContext';
 import { clearAppIdentityStorage } from '../../services/storage';
 import { getPriorityActions } from '../../utils/priorityActions';
 import type { CommunityPost } from '../../types';
+import type { HomeStackParamList } from '../../types/navigation';
+import { FONT_HEADING, FONT_HEADING_SEMIBOLD, FONT_BODY, FONT_BODY_MEDIUM, FONT_BODY_SEMIBOLD, FONT_BODY_BOLD } from '../../constants/fonts';
 
 const TAG_LABELS: Record<string, string> = {
   urgent: 'URGENT',
@@ -59,8 +63,15 @@ const CATEGORY_TAG_COLORS: Record<string, string> = {
   Mental: '#93c5fd',
 };
 
+/** Preview items for Daily reminders (affirmations + best practices). */
+const DAILY_REMINDER_PREVIEWS = [
+  { id: 'walk', label: 'Take a walk outside', icon: '🚶', color: '#22c55e', nav: 'DailyReminders' as const },
+  { id: 'affirm', label: 'Today I am enough', icon: '✨', color: '#f59e0b', nav: 'DailyReminders' as const },
+  { id: 'breathe', label: '5 min breathing', icon: '🍃', color: '#10b981', nav: 'DailyReminders' as const },
+];
+
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<HomeStackParamList, 'Home'>>();
   const { user, setUser } = useProfile();
   const { signOut } = useAuth();
 
@@ -103,50 +114,38 @@ export default function HomeScreen() {
       >
         <Text style={styles.heyName}>HEY {firstName.toUpperCase()}</Text>
         <View style={styles.avatarOnGradient}>
-          <Text style={styles.avatarText}>
-            {(firstName[0] || '?').toUpperCase()}
-          </Text>
+          <Image
+            source={require('../../../assets/logo.png')}
+            style={styles.avatarImage}
+            resizeMode="contain"
+          />
         </View>
-        <TouchableOpacity
-          onPress={() => {}}
-          style={styles.gradientLifeMapCta}
-          activeOpacity={0.8}
-        >
-          <Text style={styles.gradientLifeMapCtaText}>View full life map</Text>
-        </TouchableOpacity>
       </LinearGradient>
 
       <View style={styles.content}>
         <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>My daily actions. Today</Text>
-        <TouchableOpacity onPress={() => {}}>
+        <Text style={styles.sectionTitle}>Daily reminders</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('DailyReminders')}>
           <Text style={styles.seeAll}>See all</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.dailyRow}>
-        <TouchableOpacity
-          style={styles.dailyCard}
-          onPress={() => navigation.navigate('Mental' as never)}
-          activeOpacity={0.9}
-        >
-          <Text style={styles.dailyCardIcon}>✓</Text>
-          <Text style={styles.dailyCardLabel}>Log your check-in</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.dailyCard, styles.dailyCardLegal]}
-          onPress={() => navigation.navigate('Resources' as never)}
-          activeOpacity={0.9}
-        >
-          <View style={styles.legalTag}>
-            <Text style={styles.legalTagText}>LEGAL</Text>
-          </View>
-          <Text style={styles.dailyCardLabel}>Know your rights in CA</Text>
-        </TouchableOpacity>
+        {DAILY_REMINDER_PREVIEWS.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={[styles.dailyCard, { borderLeftWidth: 3, borderLeftColor: item.color }]}
+            onPress={() => navigation.navigate('DailyReminders')}
+            activeOpacity={0.9}
+          >
+            <Text style={styles.dailyCardIcon}>{item.icon}</Text>
+            <Text style={styles.dailyCardLabel}>{item.label}</Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Your priorities</Text>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={() => navigation.navigate('PrioritiesList')}>
           <Text style={styles.seeAll}>See all</Text>
         </TouchableOpacity>
       </View>
@@ -160,6 +159,14 @@ export default function HomeScreen() {
             key={a.id}
             style={styles.priorityCard}
             activeOpacity={0.8}
+            onPress={() =>
+              navigation.navigate('Roadmap', {
+                actionId: a.id,
+                title: a.title,
+                subtitle: a.subtitle,
+                tag: a.tag,
+              })
+            }
           >
             {a.tag && (
               <View style={[styles.priorityTag, { backgroundColor: TAG_COLORS[a.tag] }]}>
@@ -241,8 +248,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   heyName: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontFamily: FONT_HEADING,
+    fontSize: 56,
     color: '#fff',
     marginBottom: 16,
     textShadowColor: 'rgba(0,0,0,0.15)',
@@ -250,32 +257,20 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   avatarOnGradient: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 14,
+    overflow: 'hidden',
   },
-  gradientLifeMapCta: {
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  gradientLifeMapCtaText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.95)',
-    textShadowColor: 'rgba(0,0,0,0.12)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 1,
+  avatarImage: {
+    width: '100%',
+    height: '100%',
   },
   content: { padding: 20, paddingBottom: 100, backgroundColor: '#ffffff' },
-  avatarText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#E68D33',
-  },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -283,11 +278,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
+    fontFamily: FONT_HEADING_SEMIBOLD,
     fontSize: 18,
-    fontWeight: '700',
     color: '#0f172a',
   },
-  seeAll: { fontSize: 14, color: '#0ea5e9', fontWeight: '500' },
+  seeAll: { fontFamily: FONT_BODY_MEDIUM, fontSize: 14, color: '#0ea5e9' },
   dailyRow: {
     flexDirection: 'row',
     gap: 12,
@@ -301,41 +296,25 @@ const styles = StyleSheet.create({
     minHeight: 88,
     justifyContent: 'center',
   },
-  dailyCardLegal: {
-    backgroundColor: '#e9d5ff',
-  },
   dailyCardIcon: {
     fontSize: 28,
     color: '#22c55e',
     marginBottom: 6,
   },
-  legalTag: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgba(109,40,217,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    marginBottom: 8,
-  },
-  legalTagText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#5b21b6',
-    letterSpacing: 0.5,
-  },
   dailyCardLabel: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 14,
-    fontWeight: '600',
     color: '#0f172a',
   },
   emptyMap: {
+    fontFamily: FONT_BODY,
     fontSize: 15,
     color: '#64748b',
     fontStyle: 'italic',
   },
   priorityCard: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     backgroundColor: '#f1f5f9',
     borderRadius: 12,
     padding: 16,
@@ -350,19 +329,20 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   priorityTagText: {
+    fontFamily: FONT_BODY_BOLD,
     fontSize: 10,
-    fontWeight: '700',
     color: '#fff',
     letterSpacing: 0.5,
   },
   priorityContent: { flex: 1 },
   priorityTitle: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 16,
-    fontWeight: '600',
     color: '#0f172a',
     marginBottom: 2,
   },
   prioritySubtitle: {
+    fontFamily: FONT_BODY,
     fontSize: 13,
     color: '#64748b',
     lineHeight: 18,
@@ -371,11 +351,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#64748b',
     marginLeft: 8,
+    paddingTop: 2,
   },
   seeAllCommunity: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 14,
     color: '#22c55e',
-    fontWeight: '600',
   },
   communityCard: {
     backgroundColor: '#f1f5f9',
@@ -403,17 +384,18 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   communityAvatarText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 18,
-    fontWeight: '600',
     color: '#fff',
   },
   communityName: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 16,
-    fontWeight: '600',
     color: '#0f172a',
     marginBottom: 2,
   },
   communityMeta: {
+    fontFamily: FONT_BODY,
     fontSize: 12,
     color: '#64748b',
   },
@@ -423,11 +405,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   communityTagText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 12,
-    fontWeight: '600',
     color: '#1e293b',
   },
   communityBody: {
+    fontFamily: FONT_BODY,
     fontSize: 14,
     color: '#334155',
     lineHeight: 20,

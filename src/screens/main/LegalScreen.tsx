@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { FONT_HEADING_SEMIBOLD, FONT_BODY, FONT_BODY_SEMIBOLD } from '../../constants/fonts';
 
 const RIGHTS = [
   {
@@ -38,14 +39,14 @@ export default function LegalScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#ffffff' },
   content: { padding: 20, paddingBottom: 40 },
-  title: { fontSize: 22, fontWeight: '700', color: '#0f172a', marginBottom: 4 },
-  subtitle: { fontSize: 14, color: '#64748b', marginBottom: 20 },
+  title: { fontFamily: FONT_HEADING_SEMIBOLD, fontSize: 22, color: '#0f172a', marginBottom: 4 },
+  subtitle: { fontFamily: FONT_BODY, fontSize: 14, color: '#64748b', marginBottom: 20 },
   card: {
     backgroundColor: '#f1f5f9',
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
   },
-  cardTitle: { fontSize: 16, fontWeight: '600', color: '#0ea5e9', marginBottom: 6 },
-  cardBody: { fontSize: 14, color: '#334155', lineHeight: 20 },
+  cardTitle: { fontFamily: FONT_BODY_SEMIBOLD, fontSize: 16, color: '#0ea5e9', marginBottom: 6 },
+  cardBody: { fontFamily: FONT_BODY, fontSize: 14, color: '#334155', lineHeight: 20 },
 });

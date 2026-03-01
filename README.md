@@ -5,6 +5,8 @@
 Globally, an estimated 5.4 million children live in institutional care settings (Desmond et all., 2020).
 In the United States alone, roughly 20,000 youth turn 18 and age out of foster care each year, and around the world, hundreds of thousands of young people transition out of care annually (U.S. Department of Education, 2025).
 
+Compass is a mobile app that guides foster youth (ages 16–21) through housing, legal rights, healthcare, mental health, and community, powered by a contextual Claude AI assistant.
+
 No family. No safety net. No one to call.
 
 Most of us had someone. A parent who helped us figure out health insurance. A family friend who explained what FAFSA meant. Someone to call when things got hard.
@@ -29,10 +31,9 @@ Using Claude API, it turns that conversation into a personalized action plan. Cl
 
 Compass delivers:
 
-### 🎙 Onboarding
-Users share through their situation (housing, documents, healthcare, etc.) through a chatbot.
+### 📝 Onboarding
 
-→ Claude generates a structured profile + personalized life plan.
+Users enter name, optional birthday, and zip code. Optional voice flow lets users share their situation; Claude generates a structured profile and personalized welcome.
 
 ### 📱 Personalized Dashboard
 Highlights immediate next steps based on urgency:
@@ -60,8 +61,9 @@ During onboarding, Compass learns about your housing status, legal gaps, healthc
 
 It’s not just a chatbot but a guide that understands your context.
 ### 🧠 Mental Check-In
-A private space to check in and talk through your feelings.
-Users can speak directly to an AI agent powered by Claude. It responds in real time with warm, human-sounding support, tracks emotional trends, and suggests grounding exercises or resources when needed.
+
+A private space to check in and talk through your feelings. Users can send messages to an AI coach powered by Claude for supportive feedback; entries are saved. Includes crisis hotlines and nearby mental health resources.
+
 ### 👥 Community
 The Community tab allows users to share wins, accomplishments, tips, and advice, creating a supportive, peer-driven network. Whether it’s landing a job, finding housing, or navigating paperwork, users can post and learn from others going through similar experiences.
 
@@ -138,9 +140,18 @@ We’re asking you to help us put a compass in the hands of those who need one m
 ## Tech stack
 
 - **React Native** (Expo)
-- **Claude API (Anthropic)** — profile summary + chatbot
+- **Claude API (Anthropic)** — profile summary + contextual chatbot
 - **Google Maps Places API** — local resources by zipcode
 - **AsyncStorage** — secure local profile storage
+
+## MVP Scope (Hackathon Build)
+
+   - Form onboarding (name, zip, optional birthday)
+   - Personalized dashboard (3 priority actions)
+   - Resources (housing/food/healthcare)
+   - AI Assistant (Claude contextual chatbot)
+   - Mental tab (check-in + resources)
+   - Community feed
 
 ## Setup
 
@@ -151,8 +162,7 @@ We’re asking you to help us put a compass in the hands of those who need one m
 
 2. **Environment variables**  
    Copy `.env.example` to `.env` and set:
-   - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key
-   - `EXPO_PUBLIC_ELEVENLABS_AGENT_ID` — (optional) for voice onboarding in dev builds
+   - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key (chatbot + profile)
    - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab (nearby food banks, shelters, FQHCs). **See [GOOGLE_MAPS_SETUP.md](./GOOGLE_MAPS_SETUP.md)** for enabling Geocoding + Places API and adding the key to `.env`.
    - **Firebase (optional):** For auth + cloud profile + real community, add from Firebase Console → Project settings → Your web app: `EXPO_PUBLIC_FIREBASE_*` vars (see `.env.example`). Enable Auth (Email/Password) and Firestore. Create an index on `posts` for `createdAt` desc when prompted.
 
@@ -160,14 +170,7 @@ We’re asking you to help us put a compass in the hands of those who need one m
    ```bash
    npx expo start --ios
    ```
-   In Expo Go, onboarding skips voice and goes straight to the main app. For real voice, use a dev build: `npx expo run:ios`.
-
-   **“Don’t use managed workflow” / run `pod install`:**  
-   This project has an `ios/` folder (dev build / prebuild). You’re not using the fully managed workflow, so you need to install iOS native dependencies with CocoaPods when needed. From the project root run:
-   ```bash
-   cd ios && pod install && cd ..
-   ```
-   Run this after the first clone, after `npx expo prebuild`, or when you add/update native modules. Then run the app with `npx expo run:ios`.
+   **iOS dev build:** This project has an `ios/` folder. Install CocoaPods when needed: `cd ios && pod install && cd ..`, then `npx expo run:ios` or open `ios/Compass.xcworkspace` in Xcode.
 
 
 ## License

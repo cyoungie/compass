@@ -9,74 +9,93 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import type { OnboardingFormData, StoredUser, UserProfile } from '../../types';
+import type { OnboardingFormData } from '../../types';
 import type { OnboardingStackParamList } from '../../types/navigation';
-import { useProfile } from '../../context/ProfileContext';
-import { setStoredUser } from '../../services/storage';
-import { isFirebaseConfigured } from '../../context/AuthContext';
 import { config } from '../../constants/config';
+import { FONT_HEADING, FONT_BODY, FONT_BODY_MEDIUM, FONT_BODY_SEMIBOLD } from '../../constants/fonts';
+import { isFirebaseConfigured } from '../../context/AuthContext';
+import { isExpoGo } from '../../utils/expoGo';
+
+const COLORS = {
+  start: '#E68D33',
+  end: '#FFE6B3',
+};
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'WelcomeForm'>;
 };
 
-function defaultProfile(form: OnboardingFormData): UserProfile {
-  return {
-    housing_status: 'Unknown',
-    has_id: false,
-    has_healthcare: false,
-    education_level: 'Unknown',
-    food_secure: false,
-    wellbeing_score: 3,
-    zip_code: form.zipCode,
-    state: 'California',
-    legal_gaps: ['State ID', 'Healthcare coverage'],
-  };
-}
+type SlideIndex = 0 | 1 | 2;
 
 export default function WelcomeFormScreen({ navigation }: Props) {
-  const { setUser } = useProfile();
-  const [name, setName] = useState('');
-  const [birthday, setBirthday] = useState('');
+  const [slide, setSlide] = useState<SlideIndex>(0);
+  const [nickname, setNickname] = useState('');
+  const [age, setAge] = useState('');
   const [zipCode, setZipCode] = useState('');
 
-  const handleContinue = async () => {
-    const trimmedName = name.trim();
-    const trimmedZip = zipCode.trim();
-    if (!trimmedName) {
-      Alert.alert('Missing info', 'Please enter your name.');
-      return;
-    }
-    if (!trimmedZip) {
-      Alert.alert('Missing info', 'Please enter your zip code.');
-      return;
-    }
-    const form: OnboardingFormData = {
-      name: trimmedName,
-      birthday: birthday.trim() || '',
-      zipCode: trimmedZip,
-    };
-    if (isFirebaseConfigured) {
-      navigation.navigate('VoiceOnboarding', { form });
-      return;
-    }
-    const profile = defaultProfile(form);
-    const stored: StoredUser = {
-      form,
-      profile,
-      welcomeSummary: `We're really glad you're here. We're on your team—whether it's getting your ID, finding food, or just checking in. Your personalized map is on the Dashboard, and you can tap the chat bubble anytime you need someone in your corner.`,
-      onboardingCompletedAt: new Date().toISOString(),
-    };
-    await setStoredUser(stored);
-    setUser(stored);
+  const buildForm = (): OnboardingFormData => ({
+    name: nickname.trim(),
+    birthday: '',
+    zipCode: zipCode.trim(),
+    age: age.trim() || undefined,
+  });
+
+  const buildTranscript = (): string => {
+    const form = buildForm();
+    return `Onboarding form. Nickname (alias): ${form.name}.${form.age ? ` Age: ${form.age}.` : ''} Zip code: ${form.zipCode}. Use these details to infer a supportive profile and welcome summary.`;
   };
+
+  const goNext = () => {
+    if (slide === 0) {
+      if (!nickname.trim()) {
+        Alert.alert('Quick question', 'What should we call you? A nickname or alias is fine.');
+        return;
+      }
+      setSlide(1);
+    } else if (slide === 1) {
+      if (!age.trim()) {
+        Alert.alert('Quick question', 'How old are you? (Just your age is enough.)');
+        return;
+      }
+      setSlide(2);
+    }
+  };
+
+  const handleContinue = () => {
+    const trimmedZip = zipCode.trim();
+    if (!trimmedZip) {
+      Alert.alert('Almost there', 'Please enter your zip code so we can show you local resources.');
+      return;
+    }
+    const form = buildForm();
+    form.zipCode = trimmedZip;
+    navigation.navigate('Summary', { form, transcript: buildTranscript() });
+  };
+
+  const handleContinueWithVoice = () => {
+    const trimmedZip = zipCode.trim();
+    if (!trimmedZip) {
+      Alert.alert('Almost there', 'Please enter your zip code first.');
+      return;
+    }
+    const form = buildForm();
+    form.zipCode = trimmedZip;
+    navigation.navigate('VoiceOnboarding', { form });
+  };
+
+  const isLastSlide = slide === 2;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <LinearGradient
+        colors={[COLORS.start, COLORS.end]}
+        style={StyleSheet.absoluteFill}
+      />
       {isFirebaseConfigured && (
         <View style={styles.header}>
           <View style={styles.headerSpacer} />
@@ -89,62 +108,127 @@ export default function WelcomeFormScreen({ navigation }: Props) {
           </TouchableOpacity>
         </View>
       )}
-      <View style={styles.content}>
-        <Text style={styles.title}>Welcome to Compass</Text>
-        <Text style={styles.subtitle}>A few details to get started</Text>
 
-        {__DEV__ && (
-          <Text style={styles.debug}>
-            Firebase: {isFirebaseConfigured ? 'configured' : 'NOT configured'}
-            {!isFirebaseConfigured && ` (apiKey: ${config.firebaseApiKey ? 'set' : 'MISSING'}, projectId: ${config.firebaseProjectId ? 'set' : 'MISSING'})`}
-          </Text>
+      {/* Progress dots */}
+      <View style={styles.dots}>
+        {([0, 1, 2] as const).map((i) => (
+          <View
+            key={i}
+            style={[
+              styles.dot,
+              i === slide && styles.dotActive,
+              i < slide && styles.dotDone,
+            ]}
+          />
+        ))}
+      </View>
+
+      <View style={styles.slideContent}>
+        {/* Slide 0: Nickname */}
+        {slide === 0 && (
+          <>
+            <View style={styles.copyBlock}>
+              <Text style={styles.welcomeTitle}>Welcome to Compass</Text>
+              <Text style={styles.welcomeBody}>
+                We’re here to help you navigate what’s next. To keep things safe and private, we only need a nickname or alias—whatever you’re comfortable with.
+              </Text>
+            </View>
+            <View style={styles.inputBlock}>
+              <Text style={styles.label}>What should we call you?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Nickname or alias"
+                placeholderTextColor="rgba(0,0,0,0.4)"
+                value={nickname}
+                onChangeText={setNickname}
+                autoCapitalize="words"
+                autoFocus
+              />
+              <TouchableOpacity style={styles.button} onPress={goNext} activeOpacity={0.8}>
+                <Text style={styles.buttonText}>Next</Text>
+              </TouchableOpacity>
+            </View>
+          </>
         )}
 
-        <Text style={styles.label}>Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your name"
-          placeholderTextColor="#64748b"
-          value={name}
-          onChangeText={setName}
-          autoCapitalize="words"
-        />
+        {/* Slide 1: Age */}
+        {slide === 1 && (
+          <>
+            <View style={styles.copyBlock}>
+              <Text style={styles.welcomeTitle}>A quick detail</Text>
+              <Text style={styles.welcomeBody}>
+                Your age helps us point you to the right resources and programs. We don’t need your birthday—just how old you are.
+              </Text>
+            </View>
+            <View style={styles.inputBlock}>
+              <Text style={styles.label}>How old are you?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. 17"
+                placeholderTextColor="rgba(0,0,0,0.4)"
+                value={age}
+                onChangeText={setAge}
+                keyboardType="number-pad"
+                maxLength={3}
+                autoFocus
+              />
+              <TouchableOpacity style={styles.button} onPress={goNext} activeOpacity={0.8}>
+                <Text style={styles.buttonText}>Next</Text>
+              </TouchableOpacity>
+            </View>
+          </>
+        )}
 
-        <Text style={styles.label}>Birthday (optional)</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="MM/DD/YYYY"
-          placeholderTextColor="#64748b"
-          value={birthday}
-          onChangeText={setBirthday}
-          keyboardType="numbers-and-punctuation"
-        />
-
-        <Text style={styles.label}>Zip code</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="e.g. 90210"
-          placeholderTextColor="#64748b"
-          value={zipCode}
-          onChangeText={setZipCode}
-          keyboardType="number-pad"
-          maxLength={10}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleContinue} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Continue</Text>
-        </TouchableOpacity>
-
-        {isFirebaseConfigured && (
-          <TouchableOpacity
-            style={styles.signInLink}
-            onPress={() => navigation.getParent()?.navigate('SignIn')}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.signInLinkText}>Already have an account? Sign in</Text>
-          </TouchableOpacity>
+        {/* Slide 2: Zip code */}
+        {slide === 2 && (
+          <>
+            <View style={styles.copyBlock}>
+              <Text style={styles.welcomeTitle}>Almost there</Text>
+              <Text style={styles.welcomeBody}>
+                Your zip code lets us find housing, food, healthcare, and other support near you. Everything stays private.
+              </Text>
+            </View>
+            <View style={styles.inputBlock}>
+              <Text style={styles.label}>What’s your zip code?</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="e.g. 90210"
+                placeholderTextColor="rgba(0,0,0,0.4)"
+                value={zipCode}
+                onChangeText={setZipCode}
+                keyboardType="number-pad"
+                maxLength={10}
+                autoFocus
+              />
+              <TouchableOpacity style={styles.button} onPress={handleContinue} activeOpacity={0.8}>
+                <Text style={styles.buttonText}>Continue</Text>
+              </TouchableOpacity>
+              {!isExpoGo() && (
+                <TouchableOpacity style={styles.voiceButton} onPress={handleContinueWithVoice} activeOpacity={0.8}>
+                  <Text style={styles.voiceButtonText}>Continue with voice (optional)</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          </>
         )}
       </View>
+
+      {slide > 0 && (
+        <TouchableOpacity
+          style={styles.backLink}
+          onPress={() => setSlide((s) => (s - 1) as SlideIndex)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.backLinkText}>← Back</Text>
+        </TouchableOpacity>
+      )}
+
+      {__DEV__ && (
+        <Text style={styles.debug}>
+          Firebase: {isFirebaseConfigured ? 'on' : 'off'}
+          {!isFirebaseConfigured && config.firebaseApiKey ? ' (keys set)' : ''}
+        </Text>
+      )}
     </KeyboardAvoidingView>
   );
 }
@@ -152,14 +236,6 @@ export default function WelcomeFormScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  content: {
-    maxWidth: 400,
-    width: '100%',
-    alignSelf: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -171,59 +247,109 @@ const styles = StyleSheet.create({
   },
   headerSpacer: { width: 60 },
   signInHeaderText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 16,
-    fontWeight: '600',
-    color: '#0ea5e9',
+    color: 'rgba(0,0,0,0.75)',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 8,
+  dots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+    paddingTop: 12,
+    paddingBottom: 24,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#64748b',
-    marginBottom: 32,
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.6)',
   },
-  debug: {
-    fontSize: 12,
-    color: '#94a3b8',
-    marginBottom: 16,
+  dotActive: {
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    width: 24,
+  },
+  dotDone: {
+    backgroundColor: 'rgba(0,0,0,0.35)',
+  },
+  slideContent: {
+    flex: 1,
+    paddingHorizontal: 28,
+    justifyContent: 'center',
+  },
+  copyBlock: {
+    marginBottom: 40,
+  },
+  welcomeTitle: {
+    fontFamily: FONT_HEADING,
+    fontSize: 26,
+    color: 'rgba(0,0,0,0.85)',
+    marginBottom: 14,
+  },
+  welcomeBody: {
+    fontFamily: FONT_BODY,
+    fontSize: 17,
+    lineHeight: 24,
+    color: 'rgba(0,0,0,0.75)',
+  },
+  inputBlock: {
+    maxWidth: 360,
+    width: '100%',
+    alignSelf: 'center',
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#334155',
-    marginBottom: 8,
+    fontFamily: FONT_BODY_SEMIBOLD,
+    fontSize: 15,
+    color: 'rgba(0,0,0,0.8)',
+    marginBottom: 10,
   },
   input: {
-    backgroundColor: '#f1f5f9',
+    fontFamily: FONT_BODY,
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    fontSize: 17,
     color: '#0f172a',
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   button: {
-    backgroundColor: '#0ea5e9',
+    backgroundColor: 'rgba(0,0,0,0.75)',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 12,
   },
   buttonText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 17,
-    fontWeight: '600',
     color: '#fff',
   },
-  signInLink: {
-    marginTop: 24,
+  voiceButton: {
+    marginTop: 14,
+    paddingVertical: 12,
     alignItems: 'center',
   },
-  signInLinkText: {
+  voiceButtonText: {
+    fontFamily: FONT_BODY_MEDIUM,
     fontSize: 15,
-    color: '#64748b',
+    color: 'rgba(0,0,0,0.7)',
+  },
+  backLink: {
+    position: 'absolute',
+    bottom: 32,
+    left: 24,
+  },
+  backLinkText: {
+    fontFamily: FONT_BODY,
+    fontSize: 15,
+    color: 'rgba(0,0,0,0.65)',
+  },
+  debug: {
+    position: 'absolute',
+    bottom: 12,
+    right: 12,
+    fontSize: 10,
+    color: 'rgba(0,0,0,0.4)',
   },
 });

@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		08F3620B17BD03E3C8862E98 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5EB447CDA05AEE033CF98AF /* ExpoModulesProvider.swift */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		39AB0328311AC857AE5D35EF /* libPods-Compass.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FF0061C03979E279DC4E1CF7 /* libPods-Compass.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		6C29456FA533FC067B470914 /* libPods-Compass.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C78297AABA751C5E959F539B /* libPods-Compass.a */; };
-		A74CDDBD8DEB6A99C085FF9C /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B298D0AE27BAB10D52D0EE /* ExpoModulesProvider.swift */; };
-		AC22A7AE831A9AA68C6DF9CC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = A57AD1A1578FF3B99B0901EC /* PrivacyInfo.xcprivacy */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
+		D3D0B81727E3CF9E7006141C /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 38BC2D6D4505CA54E61289E2 /* PrivacyInfo.xcprivacy */; };
 		F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11748412D0307B40044C1D9 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
 
@@ -20,16 +20,16 @@
 		13B07F961A680F5B00A75B9A /* Compass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Compass.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Compass/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Compass/Info.plist; sourceTree = "<group>"; };
-		386AA99303BCCDBEA3E07131 /* Pods-Compass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Compass.debug.xcconfig"; path = "Target Support Files/Pods-Compass/Pods-Compass.debug.xcconfig"; sourceTree = "<group>"; };
-		7D0F50528EAA2B5A54ED9CD6 /* Pods-Compass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Compass.release.xcconfig"; path = "Target Support Files/Pods-Compass/Pods-Compass.release.xcconfig"; sourceTree = "<group>"; };
-		A57AD1A1578FF3B99B0901EC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Compass/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1C145D19109D9FBB9BB06161 /* Pods-Compass.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Compass.debug.xcconfig"; path = "Target Support Files/Pods-Compass/Pods-Compass.debug.xcconfig"; sourceTree = "<group>"; };
+		38BC2D6D4505CA54E61289E2 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Compass/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = Compass/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C78297AABA751C5E959F539B /* libPods-Compass.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Compass.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D4B298D0AE27BAB10D52D0EE /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Compass/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		D5EB447CDA05AEE033CF98AF /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Compass/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F11748412D0307B40044C1D9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Compass/AppDelegate.swift; sourceTree = "<group>"; };
 		F11748442D0722820044C1D9 /* Compass-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Compass-Bridging-Header.h"; path = "Compass/Compass-Bridging-Header.h"; sourceTree = "<group>"; };
+		F31DAD5954F0FE169A36124B /* Pods-Compass.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Compass.release.xcconfig"; path = "Target Support Files/Pods-Compass/Pods-Compass.release.xcconfig"; sourceTree = "<group>"; };
+		FF0061C03979E279DC4E1CF7 /* libPods-Compass.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Compass.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +37,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6C29456FA533FC067B470914 /* libPods-Compass.a in Frameworks */,
+				39AB0328311AC857AE5D35EF /* libPods-Compass.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,34 +53,35 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				A57AD1A1578FF3B99B0901EC /* PrivacyInfo.xcprivacy */,
+				38BC2D6D4505CA54E61289E2 /* PrivacyInfo.xcprivacy */,
 			);
 			name = Compass;
+			sourceTree = "<group>";
+		};
+		188FC9C89B9EFB65F2EDE597 /* ExpoModulesProviders */ = {
+			isa = PBXGroup;
+			children = (
+				AF3DEF34C5A8E93882D6F335 /* Compass */,
+			);
+			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				C78297AABA751C5E959F539B /* libPods-Compass.a */,
+				FF0061C03979E279DC4E1CF7 /* libPods-Compass.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4A041B0472AD84C998A667E0 /* ExpoModulesProviders */ = {
+		53572FC22023054DB5D4FE4B /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6302F7B8B4D274021BAA07FA /* Compass */,
+				1C145D19109D9FBB9BB06161 /* Pods-Compass.debug.xcconfig */,
+				F31DAD5954F0FE169A36124B /* Pods-Compass.release.xcconfig */,
 			);
-			name = ExpoModulesProviders;
-			sourceTree = "<group>";
-		};
-		6302F7B8B4D274021BAA07FA /* Compass */ = {
-			isa = PBXGroup;
-			children = (
-				D4B298D0AE27BAB10D52D0EE /* ExpoModulesProvider.swift */,
-			);
-			name = Compass;
+			path = Pods;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -97,8 +98,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
-				BEDF6B4338434E6A829FA577 /* Pods */,
-				4A041B0472AD84C998A667E0 /* ExpoModulesProviders */,
+				53572FC22023054DB5D4FE4B /* Pods */,
+				188FC9C89B9EFB65F2EDE597 /* ExpoModulesProviders */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -113,6 +114,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		AF3DEF34C5A8E93882D6F335 /* Compass */ = {
+			isa = PBXGroup;
+			children = (
+				D5EB447CDA05AEE033CF98AF /* ExpoModulesProvider.swift */,
+			);
+			name = Compass;
+			sourceTree = "<group>";
+		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,15 +129,6 @@
 			);
 			name = Supporting;
 			path = Compass/Supporting;
-			sourceTree = "<group>";
-		};
-		BEDF6B4338434E6A829FA577 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				386AA99303BCCDBEA3E07131 /* Pods-Compass.debug.xcconfig */,
-				7D0F50528EAA2B5A54ED9CD6 /* Pods-Compass.release.xcconfig */,
-			);
-			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,13 +139,13 @@
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Compass" */;
 			buildPhases = (
 				08A4A3CD28434E44B6B9DE2E /* [CP] Check Pods Manifest.lock */,
-				CFDF7633751C56D85D5638DB /* [Expo] Configure project */,
+				81F8337BFA02828F31014761 /* [Expo] Configure project */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				800E24972A6A228C8D4807E9 /* [CP] Copy Pods Resources */,
-				2D1D69EBFD16B108D8950E92 /* [CP] Embed Pods Frameworks */,
+				7DBD17E8F695B8F1B0496D24 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -195,7 +195,7 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				AC22A7AE831A9AA68C6DF9CC /* PrivacyInfo.xcprivacy in Resources */,
+				D3D0B81727E3CF9E7006141C /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +241,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2D1D69EBFD16B108D8950E92 /* [CP] Embed Pods Frameworks */ = {
+		7DBD17E8F695B8F1B0496D24 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -250,14 +250,12 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Compass/Pods-Compass-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/React-Core-prebuilt/React.framework/React",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/ReactNativeDependencies/ReactNativeDependencies.framework/ReactNativeDependencies",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC-SDK/WebRTC.framework/WebRTC",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/hermes-engine/Pre-built/hermesvm.framework/hermesvm",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/React.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ReactNativeDependencies.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/hermesvm.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,7 +291,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Compass/Pods-Compass-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CFDF7633751C56D85D5638DB /* [Expo] Configure project */ = {
+		81F8337BFA02828F31014761 /* [Expo] Configure project */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -325,7 +323,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F11748422D0307B40044C1D9 /* AppDelegate.swift in Sources */,
-				A74CDDBD8DEB6A99C085FF9C /* ExpoModulesProvider.swift in Sources */,
+				08F3620B17BD03E3C8862E98 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -334,12 +332,13 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 386AA99303BCCDBEA3E07131 /* Pods-Compass.debug.xcconfig */;
+			baseConfigurationReference = 1C145D19109D9FBB9BB06161 /* Pods-Compass.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Compass/Compass.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6363M5F675;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -370,12 +369,14 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7D0F50528EAA2B5A54ED9CD6 /* Pods-Compass.release.xcconfig */;
+			baseConfigurationReference = F31DAD5954F0FE169A36124B /* Pods-Compass.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Compass/Compass.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6363M5F675;
+				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Compass/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -428,6 +429,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -493,6 +495,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
+				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;

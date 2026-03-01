@@ -38,6 +38,7 @@ function parseGeocodeResult(result: Record<string, unknown>): LocationFromZip | 
 
 /**
  * Geocode a zip code and return location with city, county, state; validates US.
+ * Returns null if key missing, no results, or API error (e.g. REQUEST_DENIED).
  */
 export async function geocodeZipToLocation(zipCode: string): Promise<LocationFromZip | null> {
   const key = config.googleMapsApiKey;
@@ -45,6 +46,7 @@ export async function geocodeZipToLocation(zipCode: string): Promise<LocationFro
   const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(zipCode)}&components=country:US&key=${key}`;
   const res = await fetch(url);
   const data = await res.json();
+  if (data.status !== 'OK') return null; // ZERO_RESULTS, REQUEST_DENIED, OVER_QUERY_LIMIT, etc.
   const result = data.results?.[0];
   if (!result) return null;
   return parseGeocodeResult(result);
@@ -149,13 +151,37 @@ export async function getPlacesByLocation(loc: LocationFromZip): Promise<{
 }
 
 /**
- * Optional: get place details for phone number (requires Places Details API).
+ * Get nearby mental health resources (counseling, crisis support) for a zip.
  */
-export async function getPlacePhone(placeId: string): Promise<string | undefined> {
+export async function getMentalHealthResources(zipCode: string): Promise<PlaceResource[]> {
+  const loc = await geocodeZipToLocation(zipCode);
+  if (!loc || !loc.isUS) return [];
+  const { lat, lng } = loc;
+  const [counseling, crisis] = await Promise.all([
+    searchPlaces(lat, lng, 'mental health counselor youth'),
+    searchPlaces(lat, lng, 'crisis center mental health'),
+  ]);
+  const byName = new Map<string, PlaceResource>();
+  [...counseling, ...crisis].forEach((p) => byName.set(p.name, p));
+  return Array.from(byName.values()).slice(0, 10);
+}
+
+/**
+ * Optional: get place details for phone number and website (requires Places Details API).
+ */
+export async function getPlaceDetails(placeId: string): Promise<{
+  phone?: string;
+  website?: string;
+}> {
   const key = config.googleMapsApiKey;
-  if (!key) return undefined;
-  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=formatted_phone_number&key=${key}`;
+  if (!key) return {};
+  const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${encodeURIComponent(placeId)}&fields=formatted_phone_number,website&key=${key}`;
   const res = await fetch(url);
   const data = await res.json();
-  return data.result?.formatted_phone_number;
+  const r = data.result;
+  if (!r) return {};
+  return {
+    phone: r.formatted_phone_number,
+    website: r.website,
+  };
 }

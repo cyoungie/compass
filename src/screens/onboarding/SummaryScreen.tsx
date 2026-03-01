@@ -10,13 +10,18 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../types/navigation';
 import type { OnboardingFormData, StoredUser, UserProfile } from '../../types';
 import { generateProfileFromTranscript } from '../../services/claude';
+import { FONT_HEADING, FONT_BODY, FONT_BODY_SEMIBOLD } from '../../constants/fonts';
 import { setStoredUser } from '../../services/storage';
 import { useProfile } from '../../context/ProfileContext';
 import { useAuth, isFirebaseConfigured } from '../../context/AuthContext';
+
+const ORANGE = '#E68D33';
+const CREAM = '#FFE6B3';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'Summary'>;
@@ -76,6 +81,7 @@ export default function SummaryScreen({ navigation, route }: Props) {
       try {
         await auth.createAccountWithProfile(e, p, stored);
         setUser(stored);
+        (navigation.getParent() as { navigate: (name: string) => void } | undefined)?.navigate('Main');
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : (auth.authError ?? 'Account creation failed');
         setError(msg);
@@ -86,25 +92,30 @@ export default function SummaryScreen({ navigation, route }: Props) {
     }
     await setStoredUser(stored);
     setUser(stored);
+    (navigation.getParent() as { navigate: (name: string) => void } | undefined)?.navigate('Main');
   };
 
   if (loading) {
     return (
-      <View style={styles.center}>
-        <ActivityIndicator size="large" color="#0ea5e9" />
-        <Text style={styles.loadingText}>Creating your profile...</Text>
-      </View>
+      <LinearGradient colors={[ORANGE, CREAM]} style={styles.gradient}>
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color="rgba(0,0,0,0.7)" />
+          <Text style={styles.loadingText}>Creating your profile...</Text>
+        </View>
+      </LinearGradient>
     );
   }
 
   if (error && !profile) {
     return (
-      <View style={styles.center}>
-        <Text style={styles.errorText}>{error}</Text>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()} activeOpacity={0.8}>
-          <Text style={styles.buttonText}>Go back</Text>
-        </TouchableOpacity>
-      </View>
+      <LinearGradient colors={[ORANGE, CREAM]} style={styles.gradient}>
+        <View style={styles.center}>
+          <Text style={styles.errorText}>{error}</Text>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.goBack()} activeOpacity={0.8}>
+            <Text style={styles.buttonText}>Go back</Text>
+          </TouchableOpacity>
+        </View>
+      </LinearGradient>
     );
   }
 
@@ -113,6 +124,7 @@ export default function SummaryScreen({ navigation, route }: Props) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <LinearGradient colors={[ORANGE, CREAM]} style={StyleSheet.absoluteFill} />
       <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
       <Text style={styles.title}>Here’s your summary</Text>
       <View style={styles.card}>
@@ -124,7 +136,7 @@ export default function SummaryScreen({ navigation, route }: Props) {
             <TextInput
               style={styles.input}
               placeholder="Email"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="rgba(0,0,0,0.4)"
               value={email}
               onChangeText={setEmail}
               autoCapitalize="none"
@@ -134,7 +146,7 @@ export default function SummaryScreen({ navigation, route }: Props) {
             <TextInput
               style={styles.input}
               placeholder="Password"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="rgba(0,0,0,0.4)"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
@@ -165,7 +177,9 @@ export default function SummaryScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
+  },
+  gradient: {
+    flex: 1,
   },
   scroll: {
     paddingHorizontal: 24,
@@ -173,65 +187,72 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   createTitle: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 18,
-    fontWeight: '600',
-    color: '#0f172a',
+    color: 'rgba(0,0,0,0.85)',
     marginBottom: 12,
   },
   input: {
-    backgroundColor: '#f1f5f9',
+    fontFamily: FONT_BODY,
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 12,
     paddingVertical: 14,
     paddingHorizontal: 16,
     fontSize: 16,
     color: '#0f172a',
     marginBottom: 12,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   buttonDisabled: { opacity: 0.7 },
   center: {
     flex: 1,
-    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   title: {
+    fontFamily: FONT_HEADING,
     fontSize: 26,
-    fontWeight: '700',
-    color: '#0f172a',
+    color: 'rgba(0,0,0,0.85)',
     marginBottom: 20,
   },
   card: {
-    backgroundColor: '#f1f5f9',
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 12,
     padding: 20,
     marginBottom: 32,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.06)',
   },
   summary: {
+    fontFamily: FONT_BODY,
     fontSize: 16,
     lineHeight: 24,
-    color: '#334155',
+    color: 'rgba(0,0,0,0.8)',
   },
   loadingText: {
+    fontFamily: FONT_BODY,
     marginTop: 16,
     fontSize: 16,
-    color: '#64748b',
+    color: 'rgba(0,0,0,0.65)',
   },
   errorText: {
+    fontFamily: FONT_BODY,
     fontSize: 16,
     color: '#dc2626',
     textAlign: 'center',
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#0ea5e9',
+    backgroundColor: 'rgba(0,0,0,0.75)',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
   },
   buttonText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 17,
-    fontWeight: '600',
     color: '#fff',
   },
 });

@@ -9,7 +9,8 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { config } from '../constants/config';
 
 // RN persistence: getReactNativePersistence lives in @firebase/auth RN build
-const { initializeAuth, getReactNativePersistence } = require('@firebase/auth');
+const firebaseAuth = require('@firebase/auth');
+const getReactNativePersistence = (firebaseAuth.getReactNativePersistence ?? null) as ((storage: typeof ReactNativeAsyncStorage) => unknown) | null;
 
 const firebaseConfig = {
   apiKey: config.firebaseApiKey,
@@ -31,12 +32,15 @@ let db: Firestore;
 if (isFirebaseConfigured && getApps().length === 0) {
   app = initializeApp(firebaseConfig);
   try {
-    auth = initializeAuth(app, {
-      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
-    });
+    if (getReactNativePersistence) {
+      auth = firebaseAuth.initializeAuth(app, {
+        persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+      });
+    } else {
+      auth = getAuth(app);
+    }
   } catch (e) {
-    // AsyncStorage native module not linked (e.g. dev build not rebuilt after pod install)
-    console.warn('[Firebase] AsyncStorage persistence unavailable, using memory-only auth:', e);
+    console.warn('[Firebase] Auth init failed, using default:', e);
     auth = getAuth(app);
   }
   db = getFirestore(app);

@@ -16,8 +16,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.compass.app",
       "infoPlist": {
-        "NSMicrophoneUsageDescription": "Compass uses the microphone for voice onboarding.",
-        "NSSpeechRecognitionUsageDescription": "Compass uses speech recognition for voice onboarding."
+        "NSMicrophoneUsageDescription": "Compass uses the microphone so you can tell your story in your own words during onboarding.",
+        "NSSpeechRecognitionUsageDescription": "Compass uses speech recognition to turn your voice into text for your profile."
       }
     },
     "android": {
@@ -27,9 +27,19 @@
       },
       "package": "com.compass.app",
       "permissions": [
-        "RECORD_AUDIO"
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECORD_AUDIO"
       ]
     },
-    "plugins": []
+    "plugins": [
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Compass uses the microphone so you can tell your story in your own words.",
+          "speechRecognitionPermission": "Compass uses speech recognition to turn your voice into text for your profile."
+        }
+      ]
+    ]
   }
 }

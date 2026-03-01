@@ -1,17 +1,24 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native';
 import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfile } from '../context/ProfileContext';
 import ChatModal from '../components/ChatModal';
 import HomeScreen from '../screens/main/HomeScreen';
+import RoadmapScreen from '../screens/main/RoadmapScreen';
+import DailyRemindersScreen from '../screens/main/DailyRemindersScreen';
+import PrioritiesListScreen from '../screens/main/PrioritiesListScreen';
 import MentalScreen from '../screens/main/MentalScreen';
 import ResourcesScreen from '../screens/main/ResourcesScreen';
+import ResourceDetailScreen from '../screens/main/ResourceDetailScreen';
 import CommunityScreen from '../screens/main/CommunityScreen';
-import type { MainTabParamList } from '../types/navigation';
+import type { MainTabParamList, HomeStackParamList, ResourcesStackParamList } from '../types/navigation';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const ResourcesStack = createNativeStackNavigator<ResourcesStackParamList>();
 
 const TAB_BAR_WIDTH = 300;
 const TAB_BAR_ICON_SIZE = 15;
@@ -19,8 +26,12 @@ const TAB_BAR_ICON_SIZE = 15;
 function TabBarCentered(props: React.ComponentProps<typeof BottomTabBar>) {
   return (
     <View style={styles.tabBarWrapper}>
-      <View style={styles.tabBarInner}>
-        <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
+      <View style={[styles.tabBarInner, { overflow: 'hidden' }]}>
+        {Platform.OS === 'ios' ? (
+          <View style={[StyleSheet.absoluteFill, styles.tabBarFallback]} />
+        ) : (
+          <BlurView intensity={80} tint="light" style={StyleSheet.absoluteFill} />
+        )}
         <View style={styles.glassOverlay} />
         <BottomTabBar {...props} style={[props.style, styles.tabBarGlass]} />
       </View>
@@ -46,6 +57,34 @@ function DashboardHeaderRight() {
         <Text style={styles.headerAvatarText}>{initial}</Text>
       </View>
     </View>
+  );
+}
+
+function HomeStackNavigator() {
+  return (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+      initialRouteName="Home"
+    >
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="Roadmap" component={RoadmapScreen} />
+      <HomeStack.Screen name="DailyReminders" component={DailyRemindersScreen} />
+      <HomeStack.Screen name="PrioritiesList" component={PrioritiesListScreen} />
+    </HomeStack.Navigator>
+  );
+}
+
+function ResourcesStackNavigator() {
+  return (
+    <ResourcesStack.Navigator
+      screenOptions={{ headerShown: false }}
+      initialRouteName="Resources"
+    >
+      <ResourcesStack.Screen name="Resources" component={ResourcesScreen} />
+      <ResourcesStack.Screen name="ResourceDetail" component={ResourceDetailScreen} />
+    </ResourcesStack.Navigator>
   );
 }
 
@@ -81,14 +120,14 @@ export default function MainTabsWithChat() {
       >
         <Tab.Screen
           name="Home"
-          component={HomeScreen}
+          component={HomeStackNavigator}
           options={{
             title: 'COMPASS',
             tabBarLabel: 'Dashboard',
             tabBarIcon: ({ color }) => (
               <Ionicons name="compass-outline" size={TAB_BAR_ICON_SIZE} color={color} />
             ),
-            headerTitleStyle: { fontSize: 18, fontWeight: '700', letterSpacing: 0.5, color: '#ffffff' },
+            headerTitleStyle: { fontFamily: 'PlayfairDisplay_700Bold', fontSize: 18, letterSpacing: 0.5, color: '#ffffff' },
             headerRight: () => (
               <DashboardHeaderRight />
             ),
@@ -96,7 +135,7 @@ export default function MainTabsWithChat() {
         />
         <Tab.Screen
           name="Resources"
-          component={ResourcesScreen}
+          component={ResourcesStackNavigator}
           options={{
             tabBarLabel: 'Resources',
             headerShown: false,
@@ -110,6 +149,7 @@ export default function MainTabsWithChat() {
           component={MentalScreen}
           options={{
             tabBarLabel: 'Mental check-in',
+            headerShown: false,
             tabBarIcon: ({ color }) => (
               <Ionicons name="leaf-outline" size={TAB_BAR_ICON_SIZE} color={color} />
             ),
@@ -151,6 +191,9 @@ const styles = StyleSheet.create({
     width: TAB_BAR_WIDTH,
     borderRadius: 24,
     overflow: 'hidden',
+  },
+  tabBarFallback: {
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
   },
   glassOverlay: {
     ...StyleSheet.absoluteFillObject,

@@ -11,10 +11,14 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useProfile } from '../../context/ProfileContext';
-import { getNearbyResources } from '../../services/places';
+import { getPlacesByLocation, geocodeZipToLocation } from '../../services/places';
 import { config } from '../../constants/config';
 import type { PlaceResource } from '../../types';
+import type { ResourcesStackParamList } from '../../types/navigation';
+import { FONT_HEADING, FONT_BODY, FONT_BODY_SEMIBOLD, FONT_BODY_BOLD } from '../../constants/fonts';
 
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: '🏠', color: '#fef3c7' },
@@ -59,6 +63,7 @@ function withMockDistances<T extends { distance?: string }>(
 }
 
 export default function ResourcesScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<ResourcesStackParamList, 'Resources'>>();
   const { user } = useProfile();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -66,23 +71,37 @@ export default function ResourcesScreen() {
   const [foodBanks, setFoodBanks] = useState<PlaceResource[]>([]);
   const [shelters, setShelters] = useState<PlaceResource[]>([]);
   const [fqhcs, setFqhcs] = useState<PlaceResource[]>([]);
+  const [legalAid, setLegalAid] = useState<PlaceResource[]>([]);
+  const [clothing, setClothing] = useState<PlaceResource[]>([]);
+  const [geocodeFailed, setGeocodeFailed] = useState(false);
 
-  const zip = user?.form?.zipCode ?? '';
+  const zip = user?.form?.zipCode ?? user?.profile?.zip_code ?? '';
 
   useEffect(() => {
-    if (!zip) {
+    if (!zip || !config.googleMapsApiKey) {
       setLoading(false);
+      setGeocodeFailed(false);
       return;
     }
     let cancelled = false;
-    getNearbyResources(zip).then((r) => {
-      if (!cancelled) {
-        setFoodBanks(r.foodBanks);
-        setShelters(r.shelters);
-        setFqhcs(r.fqhcs);
+    setGeocodeFailed(false);
+    (async () => {
+      const loc = await geocodeZipToLocation(zip);
+      if (cancelled) return;
+      if (!loc) {
+        setGeocodeFailed(true);
         setLoading(false);
+        return;
       }
-    });
+      const r = await getPlacesByLocation(loc);
+      if (cancelled) return;
+      setFoodBanks(r.foodBanks);
+      setShelters(r.shelters);
+      setFqhcs(r.fqhcs);
+      setLegalAid(r.legalAid);
+      setClothing(r.clothing);
+      setLoading(false);
+    })();
     return () => {
       cancelled = true;
     };
@@ -91,6 +110,29 @@ export default function ResourcesScreen() {
   const openAddress = useCallback((address: string) => {
     if (address) Linking.openURL(`https://maps.google.com/?q=${encodeURIComponent(address)}`);
   }, []);
+
+  const openMapView = useCallback(() => {
+    if (zip) {
+      Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(zip)}`);
+    } else {
+      Linking.openURL('https://www.google.com/maps');
+    }
+  }, [zip]);
+
+  const openResourceDetail = useCallback(
+    (item: ResourceItem) => {
+      navigation.navigate('ResourceDetail', {
+        name: item.name,
+        address: item.address,
+        distance: item.distance,
+        categoryLabel: item.categoryLabel,
+        placeId: item.placeId,
+        phone: item.phone,
+        website: item.website,
+      });
+    },
+    [navigation]
+  );
 
   const allResources: ResourceItem[] = [
     ...withMockDistances(shelters, 0.4).map((p) => ({
@@ -109,6 +151,18 @@ export default function ResourcesScreen() {
       ...p,
       category: 'healthcare' as CategoryId,
       categoryLabel: 'FREE HEALTHCARE',
+      openStatus: 'open' as const,
+    })),
+    ...withMockDistances(legalAid, 2.0).map((p) => ({
+      ...p,
+      category: 'legal' as CategoryId,
+      categoryLabel: 'FREE LEGAL AID',
+      openStatus: 'open' as const,
+    })),
+    ...withMockDistances(clothing, 2.5).map((p) => ({
+      ...p,
+      category: 'clothing' as CategoryId,
+      categoryLabel: 'CLOTHING & ESSENTIALS',
       openStatus: 'open' as const,
     })),
   ];
@@ -143,7 +197,7 @@ export default function ResourcesScreen() {
         style={[styles.headerGradient, { height: RESOURCES_HEADER_HEIGHT }]}
       >
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => {}} style={styles.mapViewButton}>
+          <TouchableOpacity onPress={openMapView} style={styles.mapViewButton}>
             <Text style={styles.mapViewButtonText}>Map view</Text>
           </TouchableOpacity>
         </View>
@@ -162,7 +216,7 @@ export default function ResourcesScreen() {
         {/* Location bar */}
         <View style={styles.locationBar}>
           <Text style={styles.locationText}>Near {zip ? `${zip}` : LOCATION_PLACEHOLDER}</Text>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={openMapView}>
             <Text style={styles.mapViewLink}>Map view</Text>
           </TouchableOpacity>
         </View>
@@ -172,6 +226,15 @@ export default function ResourcesScreen() {
             <Ionicons name="information-circle-outline" size={20} color="#0ea5e9" />
             <Text style={styles.apiKeyBannerText}>
               Add EXPO_PUBLIC_GOOGLE_MAPS_API_KEY to .env to load nearby resources. See GOOGLE_MAPS_SETUP.md.
+            </Text>
+          </View>
+        )}
+
+        {zip && config.googleMapsApiKey && geocodeFailed && (
+          <View style={[styles.apiKeyBanner, styles.geocodeErrorBanner]}>
+            <Ionicons name="warning-outline" size={20} color="#b45309" />
+            <Text style={styles.geocodeErrorText}>
+              Couldn&apos;t find that zip or the Maps API key may be invalid. Enable Geocoding + Places API and check .env (EXPO_PUBLIC_GOOGLE_MAPS_API_KEY). See GOOGLE_MAPS_SETUP.md.
             </Text>
           </View>
         )}
@@ -222,7 +285,7 @@ export default function ResourcesScreen() {
         {showFeatured && closest && (
           <TouchableOpacity
             style={styles.featuredCard}
-            onPress={() => openAddress(closest.address)}
+            onPress={() => openResourceDetail(closest)}
             activeOpacity={0.9}
           >
             <View style={styles.featuredTag}>
@@ -243,7 +306,10 @@ export default function ResourcesScreen() {
               </View>
               <TouchableOpacity
                 style={styles.getDirectionsBtn}
-                onPress={() => openAddress(closest.address)}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  openAddress(closest.address);
+                }}
               >
                 <Text style={styles.getDirectionsText}>Get directions</Text>
               </TouchableOpacity>
@@ -263,7 +329,7 @@ export default function ResourcesScreen() {
               <TouchableOpacity
                 key={item.placeId ?? `${item.category}-${i}`}
                 style={styles.resourceCard}
-                onPress={() => openAddress(item.address)}
+                onPress={() => openResourceDetail(item)}
                 activeOpacity={0.8}
               >
                 <View style={[styles.resourceIconBox, { backgroundColor: cat.color }]}>
@@ -323,7 +389,14 @@ export default function ResourcesScreen() {
             <TouchableOpacity
               key={`call-${item.name}-${i}`}
               style={styles.resourceCard}
-              onPress={() => item.address && openAddress(item.address)}
+              onPress={() =>
+                navigation.navigate('ResourceDetail', {
+                  name: item.name,
+                  address: item.address,
+                  distance: item.distance,
+                  categoryLabel: item.categoryLabel,
+                })
+              }
               activeOpacity={0.8}
             >
               <View style={[styles.resourceIconBox, { backgroundColor: cat.color }]}>
@@ -386,13 +459,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   mapViewButtonText: {
+    fontFamily: FONT_BODY_SEMIBOLD,
     fontSize: 15,
-    fontWeight: '600',
     color: '#1e293b',
   },
   resourcesTitle: {
+    fontFamily: FONT_HEADING,
     fontSize: 28,
-    fontWeight: '700',
     color: '#ffffff',
     marginBottom: 6,
     textShadowColor: 'rgba(0,0,0,0.15)',
@@ -400,6 +473,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   resourcesTagline: {
+    fontFamily: FONT_BODY,
     fontSize: 15,
     color: 'rgba(255,255,255,0.95)',
   },
@@ -446,6 +520,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#0369a1',
   },
+  geocodeErrorBanner: {
+    backgroundColor: '#fef3c7',
+  },
+  geocodeErrorText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#b45309',
+  },
   mapViewLink: {
     fontSize: 15,
     fontWeight: '600',
@@ -468,6 +550,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   searchInput: {
+    fontFamily: FONT_BODY,
     flex: 1,
     marginLeft: 10,
     fontSize: 16,

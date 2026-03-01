@@ -90,17 +90,19 @@ Then in another terminal run `npx expo run:ios` (or press `i` in the Metro windo
 
 ## EPERM errors (reading .Trash / Library)
 
-If you see many **`Error "EPERM" reading contents of "/Users/.../Library/..."`** or **`.Trash`** messages when starting the app, something (often Watchman or Metro) is trying to read system directories it can’t access. The app can still run; these are warnings.
+If you see **`Error "EPERM" reading contents of "/Users/.../.Trash", skipping. Add this directory to your ignore list`** (or similar for `Library`) when running **`npx expo start`** or **`npx expo start --tunnel`**, the file watcher is hitting macOS system folders it isn’t allowed to read. The message says “skipping,” so the process usually continues and the app can still run.
 
 **What we did in the project:**
-- **`metro.config.js`** — limits Metro to the project directory and blocklists those paths.
+- **`metro.config.js`** — limits Metro to the project directory (`watchFolders`) and blocklists `.Trash` and `Library` in the resolver.
 - **`.watchmanconfig`** — tells Watchman to ignore common build/output dirs.
 
-**If EPERM still appears:**
-- Reset Watchman (if installed): `watchman watch-del-all`
-- Start Metro with a clean cache: `npx expo start --clear`, then run the app from another terminal with `npx expo run:ios`.
+**If EPERM still appears (especially with `--tunnel`):**
+1. **Reset Watchman** (if installed): `watchman watch-del-all`
+2. Start Metro with a clean cache: `npx expo start --clear` (or `npx expo start --tunnel --clear`).
+3. **Optional:** Disable Watchman so Metro uses Node’s watcher instead (can avoid .Trash):  
+   `WATCHMAN_DISABLE=1 npx expo start --tunnel`
 
-You can ignore the EPERM messages as long as the app opens and the red **AsyncStorage** error is fixed with a clean rebuild (see above).
+You can ignore the EPERM messages as long as the app opens and works. If you get a red **AsyncStorage** error, fix that with a clean rebuild (see above).
 
 ---
 

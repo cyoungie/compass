@@ -99,3 +99,25 @@ export async function chatWithClaude(
   const text = block && block.type === 'text' ? block.text : '';
   return text;
 }
+
+const COACH_SYSTEM = `You are a warm, supportive AI coach for a young person (often a foster youth). They are sharing how they feel today in a short daily check-in. Reply in 2–4 sentences: validate their feelings, offer brief encouragement or a small reframe, and keep the tone gentle and hopeful. Do not lecture or give long advice. No bullet points or labels.`;
+
+/**
+ * Get supportive coach feedback for a "how are you feeling" message. Used for daily mental check-in.
+ */
+export async function getCoachFeedback(userMessage: string): Promise<string> {
+  const apiKey = config.anthropicApiKey;
+  if (!apiKey) throw new Error('EXPO_PUBLIC_ANTHROPIC_API_KEY is not set');
+  const client = new Anthropic({ apiKey });
+
+  const response = await client.messages.create({
+    model: MODEL,
+    max_tokens: 256,
+    system: COACH_SYSTEM,
+    messages: [{ role: 'user', content: userMessage }],
+  });
+
+  const block = response.content?.find((b) => b.type === 'text');
+  const text = block && block.type === 'text' ? block.text : '';
+  return text || "You're doing a good job checking in with yourself. Be kind to yourself today.";
+}
