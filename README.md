@@ -143,15 +143,6 @@ We’re asking you to help us put a compass in the hands of those who need one m
 - **Google Maps Places API** — local resources by zipcode
 - **AsyncStorage** — secure local profile storage
 
-## MVP Scope (Hackathon Build)
-
-   - Form onboarding (name, zip, optional birthday)
-   - Personalized dashboard (3 priority actions)
-   - Resources (housing/food/healthcare)
-   - AI Assistant (Claude contextual chatbot)
-   - Mental tab (check-in + resources)
-   - Community feed
-
 ## Setup
 
 **Prerequisites:** Node.js 18+ and npm (or yarn). For iOS: Xcode and CocoaPods. For Android: Android Studio.
