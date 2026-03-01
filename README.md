@@ -2,10 +2,8 @@
 
 ## Inspiration
 
-Globally, an estimated 5.4 million children live in institutional care settings (Desmond et al., 2020).
+Globally, an estimated 5.4 million children live in institutional care settings (Desmond et all., 2020).
 In the United States alone, roughly 20,000 youth turn 18 and age out of foster care each year, and around the world, hundreds of thousands of young people transition out of care annually (U.S. Department of Education, 2025).
-
-Compass is a mobile app that guides foster youth (ages 16–21) through housing, legal rights, healthcare, mental health, and community, powered by a contextual Claude AI assistant.
 
 No family. No safety net. No one to call.
 
@@ -13,7 +11,7 @@ Most of us had someone. A parent who helped us figure out health insurance. A fa
 
 Foster youth don't get that. 
 
-Within a year of aging out, a shocking number face homelessness, incarceration, or unemployment. As few as 3% ever earn a college degree, not because they aren't capable, but because no one showed them the path (Somers et al., 2021).
+Within a year of aging out, a shocking number face homelessness, incarceration, or unemployment. Up to 46% experience homelessness (National Library of Medicine), and as few as 3% ever earn a college degree (Somers et al., 2021). Not because they aren't capable, but because no one showed them the path.
 
 One of our team members grew up in Guam, a territory dealing with a severe foster care crisis, and watched as friends in foster care felt cornered into joining the military as their only stable option. Not because it was their dream, but because it felt like the only door left open. She knows her friends were more capable of far more than the limited choices they were given.
 
@@ -31,9 +29,10 @@ Using Claude API, it turns that conversation into a personalized action plan. Cl
 
 Compass delivers:
 
-### 📝 Onboarding
+### 🎙 Onboarding
+Users share their situation (housing, documents, healthcare, etc.) through a chatbot.
 
-Users enter name, optional birthday, and zip code. Optional voice flow lets users share their situation; Claude generates a structured profile and personalized welcome.
+→ Claude generates a structured profile + personalized life plan.
 
 ### 📱 Personalized Dashboard
 Highlights immediate next steps based on urgency:
@@ -60,10 +59,10 @@ This is combined with a contextual AI guide that remembers your situation.
 During onboarding, Compass learns about your housing status, legal gaps, healthcare access, and support network. That information is securely stored and injected into every AI interaction so that you don’t have to re-explain your life every time you ask a question.
 
 It’s not just a chatbot but a guide that understands your context.
+
 ### 🧠 Mental Check-In
-
-A private space to check in and talk through your feelings. Users can send messages to an AI coach powered by Claude for supportive feedback; entries are saved. Includes crisis hotlines and nearby mental health resources.
-
+A private space to check in and talk through your feelings.
+Users can speak directly to an AI agent powered by Claude. It responds in real time with warm, human-sounding support, tracks emotional trends, and suggests grounding exercises or resources when needed.
 ### 👥 Community
 The Community tab allows users to share wins, accomplishments, tips, and advice, creating a supportive, peer-driven network. Whether it’s landing a job, finding housing, or navigating paperwork, users can post and learn from others going through similar experiences.
 
@@ -71,13 +70,14 @@ Long term, verified moderators can organize local events and meetups to help use
 
 
 ## How we built it
-Compass is a cross-platform mobile app (iOS & Android) built with Expo and React Native, powered by contextual AI reasoning.
+Compass is a native iOS application powered by contextual AI reasoning.
 ### Core stack:
-**React Native (Expo)** — Fast, accessible mobile experience with a single codebase for iOS and Android.
+**Swift + SwiftUI** - For a fast, accessible, and fully native iOS experience.
 
-**Claude API** — Drives conversational understanding and personalized action planning.
+**Claude API** - Drives conversational understanding and personalized action planning.
 
-**Location-Aware Resource Matching** — Zip-code–based logic using Google Places API connects users to verified, local housing, healthcare, legal, and education resources.
+**Location-Aware Resource Matching** - 
+Zip-code–based logic using Google Places API connects users to verified, local housing, healthcare, legal, and education resources.
 
 
 ## Challenges we ran into
@@ -136,6 +136,9 @@ To put a trusted adult in the pocket of every young person navigating adulthood 
 We’re asking you to help us put a compass in the hands of those who need one most.
 
 
+
+
+
 ## Tech stack
 
 - **React Native** (Expo)
@@ -154,7 +157,7 @@ We’re asking you to help us put a compass in the hands of those who need one m
 
 2. **Environment variables**  
    Copy `.env.example` to `.env` and set:
-   - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key (chatbot + profile)
+   - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key 
    - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab (nearby food banks, shelters, FQHCs). See [GOOGLE_MAPS_SETUP.md](./GOOGLE_MAPS_SETUP.md) for enabling Geocoding + Places API and adding the key to `.env`.
    - **Firebase (optional):** For auth + cloud profile + real community, add from Firebase Console → Project settings → Your web app: `EXPO_PUBLIC_FIREBASE_*` vars (see `.env.example`). Enable Auth (Email/Password) and Firestore. Create an index on `posts` for `createdAt` desc when prompted.
 
@@ -174,8 +177,9 @@ We’re asking you to help us put a compass in the hands of those who need one m
 Private / your choice.
 
 ## Citations
-
 Desmond, C., Watt, K., Saha, A., Huang, J., & Lu, C. (2020). Prevalence and number of children living in institutional care: Global, regional, and country estimates. The Lancet Child & Adolescent Health, 4(5), 370–377. https://doi.org/10.1016/S2352-4642(20)30022-5
+
+Dworsky, A., Napolitano, L., & Courtney, M. (2013). Homelessness during the transition from foster care to adulthood. American Journal of Public Health, 103(Suppl 2), S318–S323. https://doi.org/10.2105/AJPH.2013.301455
 
 Somers, C. L., Goutman, R. L., Day, A., Enright, O., Crosby, S., & Taussig, H. (2020). Academic achievement among a sample of youth in foster care: The role of school connectedness. Psychology in the Schools, 57(12), 1845–1863. https://doi.org/10.1002/pits.22433
 
