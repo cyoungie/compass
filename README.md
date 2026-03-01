@@ -83,8 +83,7 @@ Zip-code–based logic using Google Places API connects users to verified, local
 1️. **Building a Voice AI Agent for an iOS App** -
 We at first tried to incorporate ElevenLabs, but incorporating ElevenLabs into a real-time iOS experience was harder than we anticipated as we ran into some API authentication issues. We eventually decided to just use Claude because ElevenLabs was not the best fit.
 
-2. 
-**Context Management** -
+2. **Context Management** -
 Compass needs to remember a user’s situation without storing sensitive information unsafely. Balancing personalization with privacy was both a technical and ethical challenge. We designed our intake process to collect only essential information. Users can choose aliases instead of providing real names, and a clear consent form is presented before any contextual data is saved.
 
 3. **iOS App Development from Scratch** -
