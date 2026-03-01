@@ -19,3 +19,16 @@ export async function setStoredUser(user: StoredUser): Promise<void> {
 export async function clearStoredUser(): Promise<void> {
   await AsyncStorage.removeItem(STORAGE_KEYS.USER);
 }
+
+const ANONYMOUS_USER_ID_KEY = 'userId';
+
+/**
+ * Clears all app storage used for user identity so the app can show onboarding again.
+ * Call after signOut() when you want to "start from beginning".
+ */
+export async function clearAppIdentityStorage(): Promise<void> {
+  await Promise.all([
+    AsyncStorage.removeItem(STORAGE_KEYS.USER),
+    AsyncStorage.removeItem(ANONYMOUS_USER_ID_KEY),
+  ]);
+}

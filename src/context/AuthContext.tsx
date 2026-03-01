@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { auth, isFirebaseConfigured } from '../services/firebase';
 import { getUserProfile, setUserProfile } from '../services/firestore';
+import { getAuthErrorMessage } from '../utils/authErrors';
 import type { StoredUser } from '../types';
 
 interface AuthContextValue {
@@ -88,9 +89,9 @@ function AuthProviderInner({
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (e: unknown) {
-      const message = e && typeof e === 'object' && 'message' in e ? String((e as { message: string }).message) : 'Sign in failed';
+      const message = getAuthErrorMessage(e, 'Sign in failed');
       setAuthError(message);
-      throw e;
+      throw new Error(message);
     }
   }, []);
 
@@ -103,9 +104,15 @@ function AuthProviderInner({
   const createAccountWithProfile = useCallback(
     async (email: string, password: string, profile: StoredUser) => {
       setAuthError(null);
-      const { user } = await createUserWithEmailAndPassword(auth, email, password);
-      await setUserProfile(user.uid, profile);
-      setUser(profile);
+      try {
+        const { user } = await createUserWithEmailAndPassword(auth, email, password);
+        await setUserProfile(user.uid, profile);
+        setUser(profile);
+      } catch (e: unknown) {
+        const message = getAuthErrorMessage(e, 'Account creation failed');
+        setAuthError(message);
+        throw new Error(message);
+      }
     },
     [setUser]
   );

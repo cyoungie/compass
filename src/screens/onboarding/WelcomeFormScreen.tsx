@@ -15,6 +15,7 @@ import type { OnboardingStackParamList } from '../../types/navigation';
 import { useProfile } from '../../context/ProfileContext';
 import { setStoredUser } from '../../services/storage';
 import { isFirebaseConfigured } from '../../context/AuthContext';
+import { config } from '../../constants/config';
 
 type Props = {
   navigation: NativeStackNavigationProp<OnboardingStackParamList, 'WelcomeForm'>;
@@ -76,6 +77,18 @@ export default function WelcomeFormScreen({ navigation }: Props) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      {isFirebaseConfigured && (
+        <View style={styles.header}>
+          <View style={styles.headerSpacer} />
+          <TouchableOpacity
+            onPress={() => navigation.getParent()?.navigate('SignIn')}
+            activeOpacity={0.8}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <Text style={styles.signInHeaderText}>Sign in</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <View style={styles.content}>
         <Text style={styles.title}>Welcome to Compass</Text>
         <Text style={styles.subtitle}>A few details to get started</Text>
@@ -83,6 +96,7 @@ export default function WelcomeFormScreen({ navigation }: Props) {
         {__DEV__ && (
           <Text style={styles.debug}>
             Firebase: {isFirebaseConfigured ? 'configured' : 'NOT configured'}
+            {!isFirebaseConfigured && ` (apiKey: ${config.firebaseApiKey ? 'set' : 'MISSING'}, projectId: ${config.firebaseProjectId ? 'set' : 'MISSING'})`}
           </Text>
         )}
 
@@ -146,6 +160,20 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     width: '100%',
     alignSelf: 'center',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingTop: 56,
+    paddingBottom: 8,
+  },
+  headerSpacer: { width: 60 },
+  signInHeaderText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0ea5e9',
   },
   title: {
     fontSize: 28,

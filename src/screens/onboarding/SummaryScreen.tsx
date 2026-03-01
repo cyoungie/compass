@@ -77,7 +77,7 @@ export default function SummaryScreen({ navigation, route }: Props) {
         await auth.createAccountWithProfile(e, p, stored);
         setUser(stored);
       } catch (err: unknown) {
-        const msg = err && typeof err === 'object' && 'message' in err ? String((err as { message: string }).message) : 'Account creation failed';
+        const msg = err instanceof Error ? err.message : (auth.authError ?? 'Account creation failed');
         setError(msg);
       } finally {
         setCreateLoading(false);

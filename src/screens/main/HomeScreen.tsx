@@ -6,10 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useProfile } from '../../context/ProfileContext';
+import { useAuth, isFirebaseConfigured } from '../../context/AuthContext';
+import { clearAppIdentityStorage } from '../../services/storage';
 import { getPriorityActions } from '../../utils/priorityActions';
 import type { CommunityPost } from '../../types';
 
@@ -58,7 +61,28 @@ const CATEGORY_TAG_COLORS: Record<string, string> = {
 
 export default function HomeScreen() {
   const navigation = useNavigation();
-  const { user } = useProfile();
+  const { user, setUser } = useProfile();
+  const { signOut } = useAuth();
+
+  const handleStartFromBeginning = () => {
+    Alert.alert(
+      'Start from beginning',
+      'This will sign you out and clear local data. You’ll see the onboarding and sign-in flow again.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Start over',
+          style: 'destructive',
+          onPress: async () => {
+            await signOut();
+            await clearAppIdentityStorage();
+            if (!isFirebaseConfigured) setUser(null);
+          },
+        },
+      ]
+    );
+  };
+
   if (!user) return null;
 
   const actions = getPriorityActions(user.profile);
@@ -190,6 +214,16 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
       ))}
+
+      {__DEV__ && (
+        <TouchableOpacity
+          style={styles.startOverButton}
+          onPress={handleStartFromBeginning}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.startOverText}>Start from beginning (dev)</Text>
+        </TouchableOpacity>
+      )}
       </View>
     </ScrollView>
   );
@@ -407,5 +441,20 @@ const styles = StyleSheet.create({
   communityEngagementItem: {
     fontSize: 13,
     color: '#64748b',
+  },
+  startOverButton: {
+    marginTop: 32,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#fef2f2',
+    borderRadius: 8,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderColor: '#fecaca',
+  },
+  startOverText: {
+    fontSize: 13,
+    color: '#b91c1c',
+    fontWeight: '500',
   },
 });

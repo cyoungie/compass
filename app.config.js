@@ -1,7 +1,8 @@
+const path = require('path');
 const { config } = require('dotenv');
 
-// Load .env into process.env so EXPO_PUBLIC_* are available
-config();
+// Load .env from project root so it's found regardless of how Expo is started
+config({ path: path.resolve(__dirname, '.env') });
 
 const appJson = require('./app.json');
 

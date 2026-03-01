@@ -1,12 +1,21 @@
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import os
+import json
+import urllib.request
+
 load_dotenv()
 
+# Conversational AI endpoint expects xi-api-key header; SDK may not send it for this call
+api_key = os.getenv("ELEVENLABS_API_KEY") or os.getenv("XI_API_KEY")
+if not api_key:
+    print("Error: Set ELEVENLABS_API_KEY (or XI_API_KEY) in your .env file.")
+    print("Get it from https://elevenlabs.io → Profile → API Key")
+    exit(1)
+os.environ["ELEVENLABS_API_KEY"] = api_key
+os.environ["XI_API_KEY"] = api_key
 
-elevenlabs = ElevenLabs(
-   api_key=os.getenv("ELEVENLABS_API_KEY"),
-)
+elevenlabs = ElevenLabs(api_key=api_key)
 
 # Use a voice from your account (the hardcoded ID may not exist in your account)
 voices_response = elevenlabs.voices.get_all()
@@ -94,23 +103,37 @@ Guardrails:
 """
 
 
-response = elevenlabs.conversational_ai.agents.create(
-   name="My voice agent",
-   tags=["test"], # List of tags to help classify and filter the agent
-   conversation_config={
-       "tts": {
-           "voice_id": voice_id,
-           "model_id": "eleven_flash_v2"
-       },
-       "agent": {
-           "first_message": "Hi, this is Rachel from [Your Company Name] support. How can I help you today?",
-           "prompt": {
-               "prompt": prompt,
-           }
-       }
-   }
+# Use direct API call with xi-api-key header (SDK sometimes doesn't send it for convai)
+url = "https://api.elevenlabs.io/v1/convai/agents/create"
+body = {
+    "name": "My voice agent",
+    "tags": ["test"],
+    "conversation_config": {
+        "tts": {
+            "voice_id": voice_id,
+            "model_id": "eleven_flash_v2"
+        },
+        "agent": {
+            "first_message": "Hi, this is Compass. I'm here to help you get oriented—housing, ID, healthcare, whatever's on your mind. What feels most important to focus on first?",
+            "prompt": {"prompt": prompt}
+        }
+    }
+}
+req = urllib.request.Request(
+    url,
+    data=json.dumps(body).encode("utf-8"),
+    headers={
+        "Content-Type": "application/json",
+        "xi-api-key": api_key,
+    },
+    method="POST",
 )
-
-
-print("Agent created with ID:", response.agent_id)
+try:
+    with urllib.request.urlopen(req) as resp:
+        data = json.load(resp)
+        agent_id = data.get("agent_id") or data.get("id")
+        print("Agent created with ID:", agent_id)
+except urllib.error.HTTPError as e:
+    print("API error:", e.code, e.reason)
+    print(e.read().decode())
 
