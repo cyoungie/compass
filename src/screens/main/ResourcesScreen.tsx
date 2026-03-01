@@ -13,6 +13,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfile } from '../../context/ProfileContext';
 import { getNearbyResources } from '../../services/places';
+import { config } from '../../constants/config';
 import type { PlaceResource } from '../../types';
 
 const CATEGORIES = [
@@ -165,6 +166,15 @@ export default function ResourcesScreen() {
             <Text style={styles.mapViewLink}>Map view</Text>
           </TouchableOpacity>
         </View>
+
+        {zip && !config.googleMapsApiKey && (
+          <View style={styles.apiKeyBanner}>
+            <Ionicons name="information-circle-outline" size={20} color="#0ea5e9" />
+            <Text style={styles.apiKeyBannerText}>
+              Add EXPO_PUBLIC_GOOGLE_MAPS_API_KEY to .env to load nearby resources. See GOOGLE_MAPS_SETUP.md.
+            </Text>
+          </View>
+        )}
 
         {/* Search */}
         <View style={styles.searchRow}>
@@ -420,6 +430,21 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#0f172a',
+  },
+  apiKeyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#e0f2fe',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  apiKeyBannerText: {
+    flex: 1,
+    fontSize: 13,
+    color: '#0369a1',
   },
   mapViewLink: {
     fontSize: 15,

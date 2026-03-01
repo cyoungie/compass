@@ -1,10 +1,15 @@
 /**
  * Firebase Auth + Firestore. Uses JS SDK (works with Expo).
+ * Auth state is persisted with AsyncStorage so sign-in survives app restarts.
  */
-import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 import { config } from '../constants/config';
+
+// RN persistence: getReactNativePersistence lives in @firebase/auth RN build
+const { initializeAuth, getReactNativePersistence } = require('@firebase/auth');
 
 const firebaseConfig = {
   apiKey: config.firebaseApiKey,
@@ -25,10 +30,18 @@ let db: Firestore;
 
 if (isFirebaseConfigured && getApps().length === 0) {
   app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
+  try {
+    auth = initializeAuth(app, {
+      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+    });
+  } catch (e) {
+    // AsyncStorage native module not linked (e.g. dev build not rebuilt after pod install)
+    console.warn('[Firebase] AsyncStorage persistence unavailable, using memory-only auth:', e);
+    auth = getAuth(app);
+  }
   db = getFirestore(app);
 } else if (getApps().length > 0) {
-  app = getApps()[0] as FirebaseApp;
+  app = getApp();
   auth = getAuth(app);
   db = getFirestore(app);
 } else {

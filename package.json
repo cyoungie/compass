@@ -4,27 +4,31 @@
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "web": "expo start --web"
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "web": "expo start --web",
+    "create-agent": "python3 create_agent.py",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",
     "@elevenlabs/react-native": "^0.5.11",
     "@livekit/react-native": "^2.9.2",
     "@livekit/react-native-webrtc": "^137.0.2",
-    "@react-native-async-storage/async-storage": "2.2.0",
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.0.0",
     "@react-navigation/native": "^7.0.0",
     "@react-navigation/native-stack": "^7.0.0",
     "dotenv": "^16.6.1",
     "expo": "^55.0.4",
     "expo-asset": "^55.0.8",
+    "expo-audio": "~55.0.8",
     "expo-blur": "^55.0.8",
     "expo-constants": "~55.0.7",
     "expo-font": "^55.0.4",
     "expo-linear-gradient": "^55.0.8",
     "expo-linking": "~55.0.7",
+    "expo-speech": "~55.0.8",
     "expo-status-bar": "~55.0.4",
     "firebase": "^12.10.0",
     "livekit-client": "^2.15.4",
@@ -38,6 +42,7 @@
     "@babel/core": "^7.25.2",
     "@types/react": "~19.2.10",
     "babel-preset-expo": "~55.0.8",
+    "patch-package": "^8.0.0",
     "typescript": "~5.9.2"
   },
   "overrides": {

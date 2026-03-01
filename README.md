@@ -96,7 +96,7 @@ Long term, verified moderators can organize local events and meetups to help use
    Copy `.env.example` to `.env` and set:
    - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key
    - `EXPO_PUBLIC_ELEVENLABS_AGENT_ID` — (optional) for voice onboarding in dev builds
-   - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab
+   - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab (nearby food banks, shelters, FQHCs). **See [GOOGLE_MAPS_SETUP.md](./GOOGLE_MAPS_SETUP.md)** for enabling Geocoding + Places API and adding the key to `.env`.
    - **Firebase (optional):** For auth + cloud profile + real community, add from Firebase Console → Project settings → Your web app: `EXPO_PUBLIC_FIREBASE_*` vars (see `.env.example`). Enable Auth (Email/Password) and Firestore. Create an index on `posts` for `createdAt` desc when prompted.
 
 3. **Run**
@@ -104,6 +104,13 @@ Long term, verified moderators can organize local events and meetups to help use
    npx expo start --ios
    ```
    In Expo Go, onboarding skips voice and goes straight to the main app. For real voice, use a dev build: `npx expo run:ios`.
+
+   **“Don’t use managed workflow” / run `pod install`:**  
+   This project has an `ios/` folder (dev build / prebuild). You’re not using the fully managed workflow, so you need to install iOS native dependencies with CocoaPods when needed. From the project root run:
+   ```bash
+   cd ios && pod install && cd ..
+   ```
+   Run this after the first clone, after `npx expo prebuild`, or when you add/update native modules. Then run the app with `npx expo run:ios`.
 
 ## App flow
 

@@ -1,0 +1,22 @@
+diff --git a/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift b/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
+index 1234567..abcdefg 100644
+--- a/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
++++ b/node_modules/expo/ios/AppDelegates/ExpoReactNativeFactory.swift
+@@ -117,7 +117,7 @@
+         withModuleName: moduleName ?? defaultModuleName,
+         initialProperties: initialProps,
+         launchOptions: launchOptions ?? [:],
+-        devMenuConfiguration: self.devMenuConfiguration
++        devMenuConfiguration: self.devMenuConfiguration ?? RCTDevMenuConfiguration.default()
+       )
+ #else
+       rootView = factory.superView(
+@@ -130,7 +130,7 @@
+         withModuleName: moduleName ?? defaultModuleName,
+         initialProperties: initialProps,
+         launchOptions: launchOptions,
+-        devMenuConfiguration: self.devMenuConfiguration
++        devMenuConfiguration: self.devMenuConfiguration ?? RCTDevMenuConfiguration.default()
+       )
+ #else
+       rootView = rootViewFactory.view(

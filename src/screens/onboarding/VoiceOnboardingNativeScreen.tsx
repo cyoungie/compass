@@ -2,12 +2,13 @@
  * Voice onboarding using ElevenLabs + LiveKit. Only loaded in development builds;
  * do not import this file from Expo Go (native modules are not linked there).
  */
-import React, { useCallback, useRef, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { OnboardingStackParamList } from '../../types/navigation';
 import type { OnboardingFormData } from '../../types';
 import { ElevenLabsProvider, useConversation } from '@elevenlabs/react-native';
+import { requestRecordingPermissionsAsync } from 'expo-audio';
 import { config } from '../../constants/config';
 
 export type VoiceOnboardingNativeProps = {
@@ -40,6 +41,16 @@ function VoiceOnboardingContent({ navigation, route }: VoiceOnboardingNativeProp
   const transcriptRef = useRef<string[]>([]);
   const agentId = config.elevenLabsAgentId;
 
+  // Log agentId so you can confirm it's read correctly (check Metro/Xcode console)
+  useEffect(() => {
+    const id = config.elevenLabsAgentId;
+    if (id) {
+      console.log('[ElevenLabs] agentId loaded:', `${id.slice(0, 8)}...`);
+    } else {
+      console.log('[ElevenLabs] No agent ID in .env — using sample flow. Add EXPO_PUBLIC_ELEVENLABS_AGENT_ID to .env and restart Metro for real voice.');
+    }
+  }, []);
+
   const appendTranscript = useCallback((message: string, source: string) => {
     const line = source === 'user' ? `User: ${message}` : `Agent: ${message}`;
     transcriptRef.current = [...transcriptRef.current, line];
@@ -50,20 +61,43 @@ function VoiceOnboardingContent({ navigation, route }: VoiceOnboardingNativeProp
     onMessage: (props: { message: string; source?: string }) => {
       appendTranscript(props.message, (props as { source?: string }).source ?? 'agent');
     },
-    onConnect: () => {},
-    onDisconnect: () => {},
-    onError: (err) => console.warn('ElevenLabs error:', err),
+    onConnect: () => {
+      console.log('[ElevenLabs] Connected to voice session');
+    },
+    onDisconnect: () => {
+      console.log('[ElevenLabs] Disconnected from voice session');
+    },
+    onError: (err) => console.warn('[ElevenLabs] error:', err),
   });
 
   const handleStart = async () => {
-    if (!agentId) {
+    const id = config.elevenLabsAgentId;
+    console.log('[ElevenLabs] handleStart — agentId:', id ? `${id.slice(0, 12)}...` : '(empty)');
+
+    if (!id) {
       navigation.replace('Summary', { form, transcript: MOCK_TRANSCRIPT });
       return;
     }
+
     try {
-      await conversation.startSession({ agentId });
+      // Request microphone permission before ElevenLabs connects
+      const { granted, status } = await requestRecordingPermissionsAsync();
+      console.log('[ElevenLabs] Microphone permission:', { granted, status });
+      if (!granted) {
+        Alert.alert(
+          'Microphone access',
+          'Voice onboarding needs microphone access. Enable it in Settings to use the voice conversation.',
+          [
+            { text: 'Use sample instead', onPress: () => navigation.replace('Summary', { form, transcript: MOCK_TRANSCRIPT }) },
+            { text: 'OK' },
+          ]
+        );
+        return;
+      }
+
+      await conversation.startSession({ agentId: id });
     } catch (e) {
-      console.error(e);
+      console.error('[ElevenLabs] startSession error:', e);
       navigation.replace('Summary', {
         form,
         transcript: 'User shared their situation. Housing: unknown. ID: no. Healthcare: yes. Education: high school. Food: sometimes. Wellbeing: 3. Support: yes.',
@@ -89,7 +123,12 @@ function VoiceOnboardingContent({ navigation, route }: VoiceOnboardingNativeProp
         An AI voice will ask you 8 short questions. Answer at your own pace.
       </Text>
       {!agentId && (
-        <Text style={styles.fallback}>No voice agent configured. You'll go through with a sample flow.</Text>
+        <>
+          <Text style={styles.fallback}>No voice agent configured. You'll go through with a sample flow.</Text>
+          <Text style={styles.debugHint}>
+            Add EXPO_PUBLIC_ELEVENLABS_AGENT_ID=your_agent_id to the .env file in the project root (same folder as package.json). Then restart Metro (stop it and run npx expo start again) and reload the app.
+          </Text>
+        </>
       )}
       {status === 'connecting' && (
         <ActivityIndicator size="large" color="#7dd3fc" style={styles.loader} />
@@ -131,6 +170,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 26, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
   subtitle: { fontSize: 16, color: '#64748b', marginBottom: 24 },
   fallback: { fontSize: 14, color: '#b45309', marginBottom: 16 },
+  debugHint: { fontSize: 12, color: '#64748b', marginHorizontal: 16, marginBottom: 16 },
   loader: { marginVertical: 24 },
   button: {
     backgroundColor: '#0ea5e9',

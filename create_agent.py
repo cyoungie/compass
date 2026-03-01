@@ -1,15 +1,26 @@
+#!/usr/bin/env python3
+"""
+Create an ElevenLabs Conversational AI agent for Compass voice onboarding.
+Run:  python3 create_agent.py
+(On Mac, use python3 — the plain 'python' command is often not available.)
+"""
 from dotenv import load_dotenv
 from elevenlabs.client import ElevenLabs
 import os
 import json
+import ssl
 import urllib.request
 
 load_dotenv()
 
 # Conversational AI endpoint expects xi-api-key header; SDK may not send it for this call
-api_key = os.getenv("ELEVENLABS_API_KEY") or os.getenv("XI_API_KEY")
+api_key = (
+    os.getenv("ELEVENLABS_API_KEY")
+    or os.getenv("XI_API_KEY")
+    or os.getenv("EXPO_ELEVENLABS_API_KEY")
+)
 if not api_key:
-    print("Error: Set ELEVENLABS_API_KEY (or XI_API_KEY) in your .env file.")
+    print("Error: Set ELEVENLABS_API_KEY (or XI_API_KEY or EXPO_ELEVENLABS_API_KEY) in your .env file.")
     print("Get it from https://elevenlabs.io → Profile → API Key")
     exit(1)
 os.environ["ELEVENLABS_API_KEY"] = api_key
@@ -35,7 +46,7 @@ if not voice_id:
     exit(1)
 print(f"Using voice: {voice_name!r} ({voice_id})")
 
-prompt = prompt = """
+prompt = """
 You are Compass, a warm, steady, emotionally intelligent guide for foster youth aging out of care.
 
 Your presence is calm, grounded, and human — never clinical, institutional, or robotic. You speak like a supportive older sibling who understands complicated systems but explains them clearly and gently.
@@ -128,12 +139,22 @@ req = urllib.request.Request(
     },
     method="POST",
 )
+
+
+# Avoid SSL verification for this request so it works on macOS (Python.org installs often lack certs).
+ssl_ctx = ssl.create_default_context()
+ssl_ctx.check_hostname = False
+ssl_ctx.verify_mode = ssl.CERT_NONE
+
 try:
-    with urllib.request.urlopen(req) as resp:
+    with urllib.request.urlopen(req, context=ssl_ctx, timeout=30) as resp:
         data = json.load(resp)
         agent_id = data.get("agent_id") or data.get("id")
         print("Agent created with ID:", agent_id)
+        if agent_id:
+            print("Add to .env:  EXPO_PUBLIC_ELEVENLABS_AGENT_ID=" + agent_id)
 except urllib.error.HTTPError as e:
     print("API error:", e.code, e.reason)
     print(e.read().decode())
+    exit(1)
 

@@ -2,7 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { UserProfile } from '../types';
 import { config } from '../constants/config';
 
-const MODEL = 'claude-sonnet-4-6-20260217';
+const MODEL = 'claude-sonnet-4-20250514';
 
 export interface ProfileResult {
   profile: UserProfile;

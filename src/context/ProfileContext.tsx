@@ -21,12 +21,19 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
       return;
     }
     let cancelled = false;
-    getStoredUser().then((u) => {
-      if (!cancelled) {
-        setUserState(u);
-        setIsLoading(false);
-      }
-    });
+    getStoredUser()
+      .then((u) => {
+        if (!cancelled) {
+          setUserState(u);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUserState(null);
+          setIsLoading(false);
+        }
+      });
     return () => {
       cancelled = true;
     };
