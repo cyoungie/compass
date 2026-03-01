@@ -2,7 +2,7 @@
 
 ## Inspiration
 
-Globally, an estimated 5.4 million children live in institutional care settings (Desmond et all., 2020).
+Globally, an estimated 5.4 million children live in institutional care settings (Desmond et al., 2020).
 In the United States alone, roughly 20,000 youth turn 18 and age out of foster care each year, and around the world, hundreds of thousands of young people transition out of care annually (U.S. Department of Education, 2025).
 
 Compass is a mobile app that guides foster youth (ages 16–21) through housing, legal rights, healthcare, mental health, and community, powered by a contextual Claude AI assistant.
@@ -71,14 +71,13 @@ Long term, verified moderators can organize local events and meetups to help use
 
 
 ## How we built it
-Compass is a native iOS application powered by contextual AI reasoning.
+Compass is a cross-platform mobile app (iOS & Android) built with Expo and React Native, powered by contextual AI reasoning.
 ### Core stack:
-**Swift + SwiftUI** - For a fast, accessible, and fully native iOS experience.
+**React Native (Expo)** — Fast, accessible mobile experience with a single codebase for iOS and Android.
 
-**Claude API** - Drives conversational understanding and personalized action planning.
+**Claude API** — Drives conversational understanding and personalized action planning.
 
-**Location-Aware Resource Matching** - 
-Zip-code–based logic using Google Places API connects users to verified, local housing, healthcare, legal, and education resources.
+**Location-Aware Resource Matching** — Zip-code–based logic using Google Places API connects users to verified, local housing, healthcare, legal, and education resources.
 
 
 ## Challenges we ran into
@@ -155,6 +154,8 @@ We’re asking you to help us put a compass in the hands of those who need one m
 
 ## Setup
 
+**Prerequisites:** Node.js 18+ and npm (or yarn). For iOS: Xcode and CocoaPods. For Android: Android Studio.
+
 1. **Install dependencies**
    ```bash
    npm install --legacy-peer-deps
@@ -163,14 +164,18 @@ We’re asking you to help us put a compass in the hands of those who need one m
 2. **Environment variables**  
    Copy `.env.example` to `.env` and set:
    - `EXPO_PUBLIC_ANTHROPIC_API_KEY` — Claude API key (chatbot + profile)
-   - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab (nearby food banks, shelters, FQHCs). **See [GOOGLE_MAPS_SETUP.md](./GOOGLE_MAPS_SETUP.md)** for enabling Geocoding + Places API and adding the key to `.env`.
+   - `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` — for Resources tab (nearby food banks, shelters, FQHCs). See [GOOGLE_MAPS_SETUP.md](./GOOGLE_MAPS_SETUP.md) for enabling Geocoding + Places API and adding the key to `.env`.
    - **Firebase (optional):** For auth + cloud profile + real community, add from Firebase Console → Project settings → Your web app: `EXPO_PUBLIC_FIREBASE_*` vars (see `.env.example`). Enable Auth (Email/Password) and Firestore. Create an index on `posts` for `createdAt` desc when prompted.
 
-3. **Run**
+3. **Run the app**
    ```bash
-   npx expo start --ios
+   npx expo start
    ```
-   **iOS dev build:** This project has an `ios/` folder. Install CocoaPods when needed: `cd ios && pod install && cd ..`, then `npx expo run:ios` or open `ios/Compass.xcworkspace` in Xcode.
+   Then press `i` for iOS simulator or `a` for Android emulator. Or run directly:
+   - **iOS:** `npx expo start --ios`  
+   - **Android:** `npx expo start --android`
+
+   **iOS native build:** This project has an `ios/` folder. If you need a dev build, run `cd ios && pod install && cd ..`, then `npx expo run:ios` or open `ios/Compass.xcworkspace` in Xcode.
 
 
 ## License
